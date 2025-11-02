@@ -1,0 +1,7 @@
+
+
+Need to create pipeline for data analysis and Model creation.
+
+Create subfolders for each section. 
+
+Extract Transform and Loading data into a sql table completed!
