@@ -1,9 +1,8 @@
 from extract import extract_data
 from transform import DataTransformer
 from load_to_db import Database_creation, database_config
-import sqlite3
+from sqlalchemy import create_engine
 import pandas as pd
-
 
 def run_etl():
     ans = input("Have you created the database? ")
@@ -21,16 +20,13 @@ def run_etl():
         print("Pipeline completed!")
 
     else:
-        conn = sqlite3.connect("chevron_data.db")
-        
-        query= "SELECT * FROM chevron_table LIMIT 5;"
+        db_url,_ = database_config("../../config/configs.yaml")
+        engine = create_engine(db_url)
 
-        df= pd.read_sql_query(query, conn)
+        query= "SELECT * FROM chevron_table LIMIT 5;"
+        df = pd.read_sql_query(query, engine)
 
         print(df)
-
-        conn.close()
-
         print("Query Completed")
     
 if  __name__ == "__main__":
