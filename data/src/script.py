@@ -1,33 +1,48 @@
-from extract import extract_data
+from extract import extract_data, kaggle_extract_data
 from transform import DataTransformer
 from load_to_db import Database_creation, database_config
-from sqlalchemy import create_engine
 import pandas as pd
+from sqlalchemy import create_engine
 
 def run_etl():
     ans = input("Have you created the database? ")
-
-    if(ans.lower() in ['no', 'n']):
-        config,file_path = database_config("../../config/configs.yaml")
-
-        df = extract_data(file_path)
-
+    
+    db_url, local_csv_path = database_config("../../config/configs.yaml")
+    table_name = 'chevron_table'
+    
+    db = Database_creation(pd.DataFrame(), db_url, table_name)
+    db.create_database_if_not_exists()
+    
+    if ans.lower() in ['no', 'n']:
+        
+        df = extract_data(local_csv_path)
         transformer = DataTransformer(df)
-        transformed = transformer.get_cleaned_data()
-
-        db = Database_creation(transformed, config, 'chevron_table')
-        db.get_db()
+        transformed_df = transformer.get_cleaned_data()
+        db.df = transformed_df
+        db.load()
         print("Pipeline completed!")
 
     else:
-        db_url,_ = database_config("../../config/configs.yaml")
-        engine = create_engine(db_url)
+        new_data_ans = input("Do you wish to insert more data? ")
+        if new_data_ans.lower() in ['yes', 'y']:
 
-        query= "SELECT * FROM chevron_table LIMIT 5;"
-        df = pd.read_sql_query(query, engine)
+            new_data_list = kaggle_extract_data()  # returns a list of DataFrames
 
-        print(df)
-        print("Query Completed")
-    
-if  __name__ == "__main__":
+            for df in new_data_list:
+                transformer = DataTransformer(df)
+                transformed_df = transformer.add_data()
+
+                db.join(transformed_df)
+                db.load()
+            
+            print("All new data loaded successfully!")
+        else:
+            
+            engine = create_engine(db_url)
+            query = f"SELECT * FROM {table_name} LIMIT 10;"
+            preview_df = pd.read_sql_query(query, engine)
+            print(preview_df)
+            print("Query Completed")
+
+if __name__ == "__main__":
     run_etl()
