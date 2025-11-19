@@ -6,7 +6,6 @@ from sqlalchemy import create_engine
 
 def run_etl():
     ans = input("Have you created the database? ")
-    
     db_url, local_csv_path = database_config("../../config/configs.yaml")
     table_name = 'chevron_table'
     
@@ -23,10 +22,12 @@ def run_etl():
         print("Pipeline completed!")
 
     else:
-        new_data_ans = input("Do you wish to insert more data? ")
+        new_data_ans = input("Do you wish to insert more data? (Recommended for first_time use)")
+        
         if new_data_ans.lower() in ['yes', 'y']:
-
-            new_data_list = kaggle_extract_data()  # returns a list of DataFrames
+            download = input("Do you want to download datasets? ").strip().lower() in ['yes', 'y']
+            
+            new_data_list = kaggle_extract_data(download)  
 
             for df in new_data_list:
                 transformer = DataTransformer(df)
@@ -37,10 +38,10 @@ def run_etl():
             
             print("All new data loaded successfully!")
         else:
-            
             engine = create_engine(db_url)
             query = f"SELECT * FROM {table_name} LIMIT 10;"
             preview_df = pd.read_sql_query(query, engine)
+
             print(preview_df)
             print("Query Completed")
 
