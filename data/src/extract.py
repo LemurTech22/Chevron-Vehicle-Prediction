@@ -1,14 +1,17 @@
-import pandas as pd
+from pyspark.sql import SparkSession
 from pathlib import Path
 import zipfile, os, glob, subprocess
 
-def extract_data(file_path:str) -> pd.DataFrame:
+def extract_data(file_path:str):
+    spark = SparkSession.builder \
+        .appName("Data Extraction") \
+        .getOrCreate()
     path = Path(file_path)
     if not path.exists():
         raise FileNotFoundError(f"File not found : {file_path}")
     
     print(f"Extracting Data from {file_path}")
-    data = pd.read_csv(path)
+    data = spark.read.csv(str(path))
 
     print(f"Dataset size: {len(data)}")
     return data

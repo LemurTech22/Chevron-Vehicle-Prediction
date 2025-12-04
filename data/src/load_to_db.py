@@ -1,32 +1,29 @@
-import yaml
-from sqlalchemy import create_engine, inspect, text
+from urllib.parse import urlparse
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from urllib.parse import urlparse
-import os
-from transform import DataTransformer
-import pandas as pd
+from pyspark.sql import DataFrame
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import lit
+import os, yaml  # noqa: E401
+
 
 def database_config(config_path):
-    """Reads database configuration from YAML"""
     base_dir = os.path.dirname(os.path.abspath(__file__))
     full_path = os.path.join(base_dir, config_path)
 
     with open(full_path, "r") as f:
         config = yaml.safe_load(f)
 
-    # Load local CSV path inside data folder
     csv_path = os.path.join(base_dir, "Chevron_data.csv")
 
     print("Loaded config:", config)
     print("Loaded CSV path:", csv_path)
 
     return config["database_url"], csv_path
-
-class Database_creation:
-    def __init__(self, df, db_url, table_name):
-        transformer = DataTransformer(df)
-        self.df = transformer.get_cleaned_data()
+class Database_Creation:
+    def __init__(self, spark: SparkSession, df: DataFrame, db_url: str, table_name: str):
+        self.spark = spark
+        self.df = df
         self.db_url = db_url
         self.table_name = table_name
 
@@ -60,89 +57,57 @@ class Database_creation:
         cur.close()
         conn.close()
 
-    def add_new_columns_to_table(self):
-        engine = create_engine(self.db_url)
-        inspector = inspect(engine)
+    def load(self, mode="append"):
+        print(f"Loading Spark DataFrame into '{self.table_name}'...")
 
-        if not inspector.has_table(self.table_name):
-            return
+        properties = {
+            "user": urlparse(self.db_url).username,
+            "password": urlparse(self.db_url).password,
+            "driver": "org.postgresql.Driver"
+        }
 
-        existing_cols = [c["name"] for c in inspector.get_columns(self.table_name)]
-        new_cols = [c for c in self.df.columns if c not in existing_cols]
+        self.df.write \
+            .format("jdbc") \
+            .option("url", self.db_url) \
+            .option("dbtable", self.table_name) \
+            .options(**properties) \
+            .mode(mode) \
+            .save()
 
-        if not new_cols:
-            print("No new columns needed.")
-            return
+        print("Load complete.")
 
-        print(f"Adding {len(new_cols)} new columns...")
-        with engine.connect() as conn:
-            for col in new_cols:
-                conn.execute(text(
-                    f'ALTER TABLE "{self.table_name}" ADD COLUMN "{col}" TEXT'
-                ))
-            conn.commit()
+    # ----------------------------------------
+    # Merge (UNION) new Spark DataFrame
+    # ----------------------------------------
+    def join(self, new_df: DataFrame):
+        print("Unioning new Spark DF with existing table data...")
 
-    def align_columns(self):
-        engine = create_engine(self.db_url)
-        inspector = inspect(engine)
+        # Load existing table
+        existing_df = self.spark.read \
+            .format("jdbc") \
+            .option("url", self.db_url) \
+            .option("dbtable", self.table_name) \
+            .option("driver", "org.postgresql.Driver") \
+            .load()
 
-        if not inspector.has_table(self.table_name):
-            return self.df
+        # Align columns
+        existing_cols = existing_df.columns
+        new_cols = new_df.columns
 
-        db_cols = [col["name"] for col in inspector.get_columns(self.table_name)]
+        all_cols = list(set(existing_cols) | set(new_cols))
 
-        for col in db_cols:
-            if col not in self.df.columns:
-                self.df[col] = None
+        # Add missing columns
+        for col in all_cols:
+            if col not in existing_cols:
+                existing_df = existing_df.withColumn(col, lit(None))
 
-        self.df = self.df[db_cols]
-        return self.df
-    
-    def join(self, new_df):
-        """Join new data with existing table data in memory before loading"""
-        print(f"Joining new data to '{self.table_name}'")
-        engine = create_engine(self.db_url)
-        inspector = inspect(engine)
+            if col not in new_cols:
+                new_df = new_df.withColumn(col, lit(None))
 
-        if inspector.has_table(self.table_name):
-            existing_df = pd.read_sql_table(self.table_name, engine)
+        # Same column order
+        existing_df = existing_df.select(all_cols)
+        new_df = new_df.select(all_cols)
 
-            all_cols = list(set(existing_df.columns) | set(new_df.columns))
-            for col in all_cols:
-                if col not in existing_df.columns:
-                    existing_df[col] = None
-                if col not in new_df.columns:
-                    new_df[col] = None
-
-            existing_df = existing_df[all_cols]
-            new_df = new_df[all_cols]
-
-            self.df = pd.concat([existing_df, new_df], ignore_index=True)
-            self.df.drop_duplicates(inplace=True)
-            print(f"Joined {len(new_df)} rows with existing {len(existing_df)} rows")
-        else:
-            self.df = new_df
-            print("Table doesn't exist yet; using new data as initial dataset")
-
-    def load(self):
-        print(f"Loading data into table '{self.table_name}'...")
-
-        engine = create_engine(self.db_url)
-        inspector = inspect(engine)
-        exists = inspector.has_table(self.table_name)
-
-        if exists:
-            self.add_new_columns_to_table()
-            self.df = self.align_columns()
-            mode = "append"
-        else:
-            print("Creating table for the first time...")
-            mode = "replace"
-
-        self.df.to_sql(self.table_name, engine, if_exists=mode, index=False)
-        print(f"Loaded {len(self.df)} rows.")
-
-    def get_db(self):
-        self.create_database_if_not_exists()
-        self.load()
-        return self.df
+        # Union
+        self.df = existing_df.unionByName(new_df)
+        print("Union completed.")

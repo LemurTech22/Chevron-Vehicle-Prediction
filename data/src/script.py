@@ -1,15 +1,19 @@
 from extract import extract_data, kaggle_extract_data
 from transform import DataTransformer
-from load_to_db import Database_creation, database_config
-import pandas as pd
-from sqlalchemy import create_engine
+from load_to_db import Database_Creation, database_config
+from pyspark.sql import SparkSession
 
 def run_etl():
+    spark = SparkSession.builder \
+        .appName('ChevronETL') \
+        .config('spark.jars', r"C:\spark_jars\postgresql-42.7.8.jar") \
+        .getOrCreate()
+    
     ans = input("Have you created the database? ")
     db_url, local_csv_path = database_config("../../config/configs.yaml")
     table_name = 'chevron_table'
     
-    db = Database_creation(pd.DataFrame(), db_url, table_name)
+    db = Database_Creation(spark, None, db_url, table_name)
     db.create_database_if_not_exists()
     
     if ans.lower() in ['no', 'n']:
@@ -18,6 +22,7 @@ def run_etl():
         transformer = DataTransformer(df)
         transformed_df = transformer.get_cleaned_data()
         db.df = transformed_df
+
         db.load()
         print("Pipeline completed!")
 
@@ -38,11 +43,16 @@ def run_etl():
             
             print("All new data loaded successfully!")
         else:
-            engine = create_engine(db_url)
-            query = f"SELECT * FROM {table_name} LIMIT 10;"
-            preview_df = pd.read_sql_query(query, engine)
-
-            print(preview_df)
+            preview_df = spark.read \
+                .format("jdbc") \
+                .option("url", "jdbc:postgresql://localhost:5433/chevron_data.db") \
+                .option("dbtable", table_name) \
+                .option("user", "postgres") \
+                .option("password", "Jconde2237!") \
+                .option("driver", "org.postgresql.Driver") \
+                .load()
+            
+            preview_df.show()
             print("Query Completed")
 
 if __name__ == "__main__":
