@@ -1,1 +1,5 @@
 kaggle
+pyspark
+pandas
+numpy
+matplotlib
