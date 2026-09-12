@@ -23,7 +23,9 @@ class DataTransformer:
     def drop_unwanted_columns(self):
         """Drops Unnecessary Columns"""
         print("Dropping unwanted columns...")
-            
+            #make this dynamic based on correlation factors maybe in data science factor but not in pipeline. 
+            #only combine features, rename, or drop obvious features only like postal code, vin, etc...
+            #we are trying to predict vehicle trends here.
         columns_to_drop = [
                 'trim', 'interior', 'color', 'condition', 'model', 'odometer', 'seller', 
                 'make', 'body', 'vin', 'state', 'mmr', 'transmission', 'quarter', 'county', 

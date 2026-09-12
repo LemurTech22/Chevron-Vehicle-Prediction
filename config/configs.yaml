@@ -1,1 +1,5 @@
-database_url: postgresql+psycopg2://postgres:Jconde2237!@localhost:5433/chevron_data.db
+database_url: "jdbc:postgresql://localhost:5432/chevron_data"
+db_user: "postgres"
+db_password: "Jconde2237!"
+csv_path: "src/app/datasets/raw/Chevron_data.csv"
+postgres_jar_path: "spark_jars/postgresql-42.7.8.jar"
