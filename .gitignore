@@ -2,9 +2,9 @@
 /tmp
 /cache
 **/__pycache__/
-**/__pycache__
 *.pyc
 *.vscode/
-*/.config
+*/config
 
+*.dvcignore
 .venv/
