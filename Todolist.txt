@@ -1,7 +1,21 @@
+TODO:
+Work on Transformation.py
+implement cloud services  
+Work on analytics
 
+
+In Progress
 
 Need to create pipeline for data analysis and Model creation.
 
 Create subfolders for each section. 
 
+refactor code
+
+
+
+
+
+
+Completed
 Extract Transform and Loading data into a sql table completed!

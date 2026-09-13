@@ -4,7 +4,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import lit
-import os, yaml, time
+import os, yaml
 
 
 # Standalone function — no self needed, no chicken-and-egg problem
