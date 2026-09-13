@@ -7,7 +7,9 @@ from transform.transform import DataTransformer
 def setup():
     def helper_pipeline():
         df = extract_data(local_csv_path)
-        db.df = df
+        transformer = DataTransformer(df)
+        cleaned = transformer.get_cleaned_data()
+        db.df = cleaned
         db.load()
 
     config, local_csv_path, jar_path = database_config("../../../../config/configs.yaml")
@@ -22,19 +24,17 @@ def setup():
 
     print("Checking if database exist ...")
     not_created = db.create_database_if_not_exists()
-
-    if not_created:
+    answer = 'y'
+    if answer.lower() in ["yes", 'y']:
         helper_pipeline()
-        ans = input("Do you wish to insert more data?")
-        if ans.lower() in ['yes', 'y']:
-            new_data_list = kaggle_extract_data()
-            for df in new_data_list:
-                transformer = DataTransformer(df)
-                transformed = transformer.add_data(transformer)
-                db.join(transformed)
-                db.save()
-        else:
-            print("Skipping additional data")
+
+        new_data_list = kaggle_extract_data()
+        for df in new_data_list:
+            transformer = DataTransformer(df)
+            transformed = transformer.add_data()
+            db.join(transformed)
+        print("Data Combined into Chevron Table...")
     else:
+        print("Skipping additional data")
         print("Database Found: Running pipeline")
         helper_pipeline()
