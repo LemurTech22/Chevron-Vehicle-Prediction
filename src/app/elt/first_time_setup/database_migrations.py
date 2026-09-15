@@ -9,8 +9,7 @@ def setup():
         df = extract_data(local_csv_path)
         transformer = DataTransformer(df)
         cleaned = transformer.get_cleaned_data()
-        db.df = cleaned
-        db.load()
+        db.load(cleaned, table_name="chevron_table")
 
     config, local_csv_path, jar_path = database_config("../../../../config/configs.yaml")
 
@@ -19,8 +18,7 @@ def setup():
         .config('spark.jars', jar_path) \
         .getOrCreate()
 
-    table_name = 'chevron_table'
-    db = Database_Creation(spark, None, config, table_name)
+    db = Database_Creation(spark, config)
 
     print("Checking if database exist ...")
     not_created = db.create_database_if_not_exists()
@@ -29,12 +27,13 @@ def setup():
         helper_pipeline()
 
         new_data_list = kaggle_extract_data()
-        for df in new_data_list:
+        for new_table_name, df in new_data_list:
             transformer = DataTransformer(df)
             transformed = transformer.add_data()
-            db.join(transformed)
+            db.load(transformed, table_name=new_table_name)
         print("Data Combined into Chevron Table...")
     else:
         print("Skipping additional data")
-        print("Database Found: Running pipeline")
-        helper_pipeline()
+    # add check if additional data is added. maybe json file that has the datasets used. so question is how do we retain that information?
+    print("Database Found: Running pipeline")
+    helper_pipeline()

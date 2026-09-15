@@ -3,11 +3,11 @@ import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import lit
+from pyspark.sql.types import StringType
+from pyspark.sql.functions import col as spark_col, lit
 import os, yaml
 
 
-# Standalone function — no self needed, no chicken-and-egg problem
 def database_config(config_path):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     full_path = os.path.abspath(os.path.join(base_dir, config_path))
@@ -26,10 +26,8 @@ def database_config(config_path):
 
 
 class Database_Creation:
-    def __init__(self, spark: SparkSession, df: DataFrame, config: dict, table_name: str):
+    def __init__(self, spark: SparkSession, config: dict):
         self.spark = spark
-        self.df = df
-        self.table_name = table_name
 
         jdbc_url = config["database_url"]
         without_prefix = jdbc_url.replace("jdbc:postgresql://", "")
@@ -68,27 +66,27 @@ class Database_Creation:
         conn.close()
         return not exists
 
-    def load(self, mode="append"):
-        print(f"Loading Spark DataFrame into '{self.table_name}'...")
+    def load(self, df: DataFrame, table_name: str, mode="append"):
+        print(f"Loading Spark DataFrame into '{table_name}'...")
         properties = {
             "user": self.user,
             "password": self.password,
             "driver": "org.postgresql.Driver"
         }
-        self.df.write \
+        df.write \
             .format("jdbc") \
             .option("url", self.db_url) \
-            .option("dbtable", self.table_name) \
+            .option("dbtable", table_name) \
             .options(**properties) \
             .mode(mode) \
             .save()
         print("Load complete.")
 
-    def join(self, new_df: DataFrame):
+    def join(self, new_df: DataFrame, table_name: str):
         existing_df = self.spark.read \
             .format("jdbc") \
             .option("url", self.db_url) \
-            .option("dbtable", self.table_name) \
+            .option("dbtable", table_name) \
             .option("driver", "org.postgresql.Driver") \
             .options(user=self.user, password=self.password) \
             .load()
@@ -97,13 +95,25 @@ class Database_Creation:
         new_cols = new_df.columns
         all_cols = list(set(existing_cols) | set(new_cols))
 
-        for col in all_cols:
-            if col not in existing_cols:
-                existing_df = existing_df.withColumn(col, lit(None))
-            if col not in new_cols:
-                new_df = new_df.withColumn(col, lit(None))
+        for c in all_cols:
+            if c not in existing_cols:
+                existing_df = existing_df.withColumn(c, lit(None).cast(StringType()))
+            else:
+                existing_df = existing_df.withColumn(c, spark_col(c).cast(StringType()))
+            if c not in new_cols:
+                new_df = new_df.withColumn(c, lit(None).cast(StringType()))
+            else:
+                new_df = new_df.withColumn(c, spark_col(c).cast(StringType()))
 
         existing_df = existing_df.select(all_cols)
         new_df = new_df.select(all_cols)
-        self.df = existing_df.unionByName(new_df)
-        print("Union completed.")
+        combined_df = existing_df.unionByName(new_df)
+
+        combined_df.write \
+            .format("jdbc") \
+            .option("url", self.db_url) \
+            .option("dbtable", table_name) \
+            .options(user=self.user, password=self.password, driver="org.postgresql.Driver") \
+            .mode("overwrite") \
+            .save()
+        print(f"Union completed and '{table_name}' updated.")
