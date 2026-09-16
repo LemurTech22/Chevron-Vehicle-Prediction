@@ -12,10 +12,11 @@ Create subfolders for each section.
 
 refactor code
 
-
+implement logging and error checking and validation.
 
 
 
 
 Completed
 Extract Transform and Loading data into a sql table completed!
+implemented staging for databases

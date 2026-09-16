@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pathlib import Path
 from kaggle.api.kaggle_api_extended import KaggleApi
-import zipfile, os, glob, time, json
+import zipfile, os, glob, time, json, shutil
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,13 +14,11 @@ EXTRACTED_ROOT = os.path.join(EXTERNAL_DIRECTORY, "extracted")
 DATASET_TABLE_MAP = {
     'tanishqdublish/vehcile-fuel-consumption': 'raw_fuel_consumption',
     'ricardobj/electric-vehicle-population': 'raw_ev_population',
-    'willianoliveiragibin/electric-vehicle-population': 'raw_ev_population_alt',
     'syedanwarafridi/vehicle-sales-data': 'raw_vehicle_sales',
     'sahirmaharajj/fuel-economy': 'raw_fuel_economy',
 }
 
 DATASETS = list(DATASET_TABLE_MAP.keys())
-
 
 def extract_data(file_path: str):
     """Read a single CSV file into a Spark DataFrame."""
@@ -32,6 +30,7 @@ def extract_data(file_path: str):
         raise FileNotFoundError(f"File not found : {file_path}")
     print(f"Extracting Data from {file_path}")
     data = spark.read.csv(str(path), header=True, inferSchema=True)
+    
     print(f"Dataset size: {data.count()}")
     return data
 
@@ -41,11 +40,9 @@ def load_state():
             return json.load(f)
     return {}
 
-
 def save_state(state):
     with open(STATE_FILE, "w") as f:
         json.dump(state, f, indent=2)
-
 
 def get_remote_last_updated(api, ds):
     owner, dataset_name = ds.split("/")
@@ -78,6 +75,9 @@ def download_and_extract(ds, zip_path, extract_to):
     print(f"Downloading (changed): {ds}")
     _api.dataset_download_files(ds, path=EXTERNAL_DIRECTORY, force=True)
 
+    if os.path.exists(extract_to):
+        shutil.rmtree(extract_to)
+
     os.makedirs(extract_to, exist_ok=True)
     print(f"Extracting {ds} to {extract_to}")
     with zipfile.ZipFile(zip_path, "r") as z:
@@ -93,11 +93,7 @@ def load_csvs_as_dataframes(extract_to):
 
 
 def kaggle_extract_data(datasets=None):
-    """
-    Download (if changed) and extract each configured Kaggle dataset.
-    Returns a list of (table_name, dataframe) pairs so each dataset can be
-    loaded into its own staging table — no cross-dataset schema merging here.
-    """
+
     global _api
     if datasets is None:
         datasets = DATASETS

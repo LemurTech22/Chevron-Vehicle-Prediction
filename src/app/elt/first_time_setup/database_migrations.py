@@ -31,9 +31,10 @@ def setup():
             transformer = DataTransformer(df)
             transformed = transformer.add_data()
             db.load(transformed, table_name=new_table_name)
-        print("Data Combined into Chevron Table...")
+        print("Created databases refer to ")
     else:
         print("Skipping additional data")
     # add check if additional data is added. maybe json file that has the datasets used. so question is how do we retain that information?
-    print("Database Found: Running pipeline")
-    helper_pipeline()
+        print("Database Found: Running pipeline")
+        helper_pipeline()
+        
