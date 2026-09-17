@@ -8,4 +8,9 @@
 .dvcignore
 .venv/
 .env
-*/src/app/elt/dbt_project
+*.vscode/
+.dvc/
+/home/jose/github-repo/Chevron-Vehicle-Prediction/.vscode
+src/app/elt/dbt_project
+src/app/elt/logs
+src/app/elt/db/dumps

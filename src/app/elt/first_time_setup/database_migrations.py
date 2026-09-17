@@ -4,13 +4,36 @@ from load.load_to_db import Database_Creation, database_config
 from extract.extract import extract_data, kaggle_extract_data
 from transform.transform import DataTransformer
 
-def setup():
-    def helper_pipeline():
-        df = extract_data(local_csv_path)
-        transformer = DataTransformer(df)
-        cleaned = transformer.get_cleaned_data()
-        db.load(cleaned, table_name="chevron_table")
+from scripts.dbt.run_dbt_build import run_dbt_build
+from scripts.db.export_db import database_export
 
+def setup():
+    
+    def helper_dbt():
+        dbt_result = run_dbt_build(project_dir="dbt_project", profile_dir="dbt_project")
+        if dbt_result.success:
+            database_export("staging_1").db_export_script()        
+        else:
+            raise ValueError(f"DBT Failed to validate schema on final staging.")
+        
+    def helper_pipeline(import_data: bool):
+        if import_data:
+            new_data_list = kaggle_extract_data()
+            for new_table_name, df in new_data_list:
+                transformer = DataTransformer(df)
+                transformed = transformer.add_data()
+                db.load(transformed, table_name=new_table_name)
+                print(f"Created databases refer to {new_table_name}")
+        else:
+            print("Skipping additional data")
+                
+            df = extract_data(local_csv_path)
+            transformer = DataTransformer(df)
+            cleaned = transformer.get_cleaned_data()
+            db.load(cleaned, table_name="chevron_table")
+
+    """----------------------------------------------------------------------------------------"""
+    
     config, local_csv_path, jar_path = database_config("../../../../config/configs.yaml")
 
     spark = SparkSession.builder \
@@ -21,20 +44,15 @@ def setup():
     db = Database_Creation(spark, config)
 
     print("Checking if database exist ...")
-    not_created = db.create_database_if_not_exists()
-    answer = 'y'
-    if answer.lower() in ["yes", 'y']:
-        helper_pipeline()
-
-        new_data_list = kaggle_extract_data()
-        for new_table_name, df in new_data_list:
-            transformer = DataTransformer(df)
-            transformed = transformer.add_data()
-            db.load(transformed, table_name=new_table_name)
-        print("Created databases refer to ")
+    #use boolean once in production in development we swap to bool 
+    created = db.create_database_if_not_exists()
+    if not created:
+        helper_pipeline(created)
+        helper_dbt()
     else:
-        print("Skipping additional data")
     # add check if additional data is added. maybe json file that has the datasets used. so question is how do we retain that information?
         print("Database Found: Running pipeline")
-        helper_pipeline()
+        helper_pipeline(created)
+        helper_dbt()
+        
         
