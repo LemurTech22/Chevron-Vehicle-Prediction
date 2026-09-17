@@ -3,18 +3,17 @@ Work on Transformation.py
 implement cloud services  
 Work on analytics
 
+Stage 2
+Clean Up columns in databases and simplify columns. 
+Remove and standarize datapoints, or missing values.
 
 In Progress
 
 Need to create pipeline for data analysis and Model creation.
 
-Create subfolders for each section. 
-
 refactor code
 
 implement logging and error checking and validation.
-
-
 
 
 Completed

@@ -41,6 +41,7 @@ class Database_Creation:
         self.password = config["db_password"]
         self.db_url = jdbc_url
 
+
     def create_database_if_not_exists(self):
         print("Connecting to database ...")
         conn = psycopg2.connect(
@@ -65,33 +66,47 @@ class Database_Creation:
         cur.close()
         conn.close()
         return not exists
-
-    def load(self, df: DataFrame, table_name: str, mode="append"):
-        print(f"Loading Spark DataFrame into '{table_name}'...")
+    
+    def spark_connection(self, df:DataFrame, table_name:str, mode:str):
+        print(f"Loading Spark Dataframe/SQL into '{table_name}' and '{mode}' to the Table.")
         properties = {
             "user": self.user,
             "password": self.password,
             "driver": "org.postgresql.Driver"
         }
-        df.write \
-            .format("jdbc") \
-            .option("url", self.db_url) \
-            .option("dbtable", table_name) \
-            .options(**properties) \
-            .mode(mode) \
-            .save()
+        
+        if mode in ("append", "overwrite"):
+            df.write \
+                .format("jdbc") \
+                .option("url", self.db_url) \
+                .option("dbtable", table_name) \
+                .options(**properties) \
+                .mode(mode) \
+                .save()
+        elif mode == "read":
+            result_df = self.spark.read \
+                .format("jdbc") \
+                .option("url", self.db_url) \
+                .option("dbtable", table_name) \
+                .option(**properties) \
+                .load()
+            print("Read complete.")
+            return result_df
+                
+        else: 
+            raise ValueError(f"{mode} feature is unavailable. \n Expected: append, overwrite, read")
+                
+        
+    def load(self, df: DataFrame, table_name: str, mode="append"):
+        print(f"Loading Spark DataFrame into '{table_name}'...")
+        self.spark_connection(df, table_name, mode)
         print("Load complete.")
 
-    def join(self, new_df: DataFrame, table_name: str):
-        existing_df = self.spark.read \
-            .format("jdbc") \
-            .option("url", self.db_url) \
-            .option("dbtable", table_name) \
-            .option("driver", "org.postgresql.Driver") \
-            .options(user=self.user, password=self.password) \
-            .load()
-
+    def helper_column_creation(self, new_df: DataFrame, table_name: str):
+        
+        existing_df = self.spark_connection(None, table_name, mode="read")
         existing_cols = existing_df.columns
+        
         new_cols = new_df.columns
         all_cols = list(set(existing_cols) | set(new_cols))
 
@@ -109,11 +124,9 @@ class Database_Creation:
         new_df = new_df.select(all_cols)
         combined_df = existing_df.unionByName(new_df)
 
-        combined_df.write \
-            .format("jdbc") \
-            .option("url", self.db_url) \
-            .option("dbtable", table_name) \
-            .options(user=self.user, password=self.password, driver="org.postgresql.Driver") \
-            .mode("overwrite") \
-            .save()
+        self.spark_connection(combined_df, table_name, mode="overwrite")
+            
+    def join(self, new_df: DataFrame, table_name: str):
+        self.helper_column_creation(new_df, table_name)
         print(f"Union completed and '{table_name}' updated.")
+        

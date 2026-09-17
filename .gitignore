@@ -3,7 +3,7 @@
 /cache
 **/__pycache__/
 *.pyc
-.vscode/
+/.vscode
 /config/
 .dvcignore
 .venv/
