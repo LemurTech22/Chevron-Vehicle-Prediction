@@ -6,4 +6,3 @@ def run_etl():
     
     database_migrations.setup()
     database_export = export_db.database_export("staging_1")
-    database_export.db_export_script()

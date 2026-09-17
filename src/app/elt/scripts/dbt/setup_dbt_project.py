@@ -52,7 +52,7 @@ sources:
 
 STG_EV_POPULATION_SQL = """\
 select 
-    vin_(1-10),
+    vin_1_10,
     county,
     city, 
     state,
@@ -61,14 +61,14 @@ select
     make,
     model,
     electric_vehicle_type,
-    clean_alternative_fuel_vehicle_(cafv)_eligibility,
+    clean_alternative_fuel_vehicle_cafv_eligibility,
     electric_range,
     base_msrp,
     legislative_district,
     dol_vehicle_id,
     vehicle_location,
     electric_utility,
-    "2020_census_tract"
+    "col_2020_census_tract"
 
 from {{ source('raw', 'raw_ev_population') }}
 """

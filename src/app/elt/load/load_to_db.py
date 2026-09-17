@@ -42,7 +42,7 @@ class Database_Creation:
         self.db_url = jdbc_url
 
 
-    def create_database_if_not_exists(self):
+    def create_database_if_exists(self):
         print("Connecting to database ...")
         conn = psycopg2.connect(
             dbname="postgres",
@@ -65,7 +65,7 @@ class Database_Creation:
 
         cur.close()
         conn.close()
-        return not exists
+
     
     def spark_connection(self, df:DataFrame, table_name:str, mode:str):
         print(f"Loading Spark Dataframe/SQL into '{table_name}' and '{mode}' to the Table.")

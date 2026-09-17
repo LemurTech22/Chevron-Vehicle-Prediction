@@ -111,10 +111,13 @@ def kaggle_extract_data(datasets=None):
 
         if up_to_date:
             print(f"Skipping '{ds}' — no changes since last pull ({state.get(ds)})")
+            continue
         else:
             download_and_extract(ds, zip_path, extract_to)
             state[ds] = remote_updated
             data_completed.append(ds)
+            print("File extraction complete")
+
 
         table_name = DATASET_TABLE_MAP[ds]
         for df in load_csvs_as_dataframes(extract_to):
@@ -122,6 +125,5 @@ def kaggle_extract_data(datasets=None):
 
     save_state(state)
     print(f"Datasets downloaded: {data_completed}")
-    print("File extraction complete")
 
     return results

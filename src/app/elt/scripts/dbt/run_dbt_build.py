@@ -19,8 +19,4 @@ def run_dbt_build(project_dir: str, profile_dir:str):
                 ]
     res: dbtRunnerResult = dbt.invoke(cli_args)
 
-    if res.result is not None: 
-        for r in res.result:
-            print(f"we are good m8")
-            
     return res
