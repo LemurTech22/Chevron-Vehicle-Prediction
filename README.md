@@ -1,7 +1,5 @@
 # Chevron Vehicle Prediction
 
-## Spring 2025 Rice Datathon
-
 Welcome! This project was developed during the Spring 2025 Rice Datathon in collaboration with Chevron. Our main goal is to predict future vehicle trends — such as the types of vehicles (gas sedans, electric vans, diesel trucks), the fuel technologies they will use, and how many of them we might see on the road in the coming years.
 
     ⚠️ Note: This project is still in production. Some features or scripts may not work perfectly just yet.
@@ -30,10 +28,11 @@ We are now working on fine-tuning the models and extending their capabilities to
 
 # Technology
 - Python
-- Pandas
-- Pycaret
 - Numpy
 - Matplotlib
 - Seaborn
 - MissingNo
 - Scikit-Learn
+- Pyspark
+- DBT
+- Kaggle API
