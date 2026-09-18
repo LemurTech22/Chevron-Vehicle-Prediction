@@ -4,7 +4,7 @@ from logs.logger import ETL_Logger, ErrorCategory
 class DataTransformer:
     def __init__(self, df):
         self.df = df
-        log = ETL_Logger(ErrorCategory.GENERAL)
+        self.log = ETL_Logger(ErrorCategory.GENERAL)
 
     def transform_columns(self):
         self.log.info("Cleaning Dataset -- normalize every column name into a safe, unquoted SQL identifier.")
