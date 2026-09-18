@@ -3,8 +3,8 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 
+from logs.logger import ETL_Logger, ErrorCategory
 load_dotenv()
-
 
 class database_export:
     def __init__(self, label: str):
@@ -15,7 +15,7 @@ class database_export:
         self.DB_PORT = os.getenv("DB_PORT")
         self.OUTPUT_DIR = os.getenv("OUTPUT_DIR")
         self.label = label
-
+        self.log = ETL_Logger(ErrorCategory.DATABASE)         
     def _pg_env(self):
         """Build an environment dict that includes PGPASSWORD, without losing the rest of the shell's env."""
         env = os.environ.copy()
@@ -27,6 +27,7 @@ class database_export:
         # drift out of sync -- e.g. db/dumps/staging_1/, db/dumps/final/
         dump_path = os.path.join(self.OUTPUT_DIR, self.label)
         os.makedirs(dump_path, exist_ok=True)
+        self.log.info(f"Created SQL dump directory at {dump_path}")
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         out_path = os.path.join(dump_path, f"{self.DB_NAME}_{timestamp}.dump")
@@ -37,28 +38,31 @@ class database_export:
         if tables:
             for t in tables:
                 cmd += ["-t", t]
-
-        print(f"Dumping {self.label} tables to {out_path}")
+        self.log.info(f"Dumping {self.label} tables to {out_path}")
         subprocess.run(cmd, check=True, env=self._pg_env())
-        print(f"Data dumps complete, refer to {out_path}")
+        self.log.info(f"Data dumps complete, refer to {out_path}")        
 
     def db_export_script(self):
         tables = ["raw_ev_population", "raw_vehicle_sales", "raw_fuel_economy", "chevron_table"]
 
         if self.label == "staging_1":
-            print(f"Creating database dump for {self.label}/Extraction.")
+            self.log.info(f"Creating database dump for {self.label}/Extraction.")        
             self.export_dbs(tables=tables)
 
         elif self.label == "staging_2":
-            print(f"Creating database dump for {self.label}/Transformation.")
+            self.log.info(f"Creating database dump for {self.label}/Transformation.")        
             self.export_dbs(tables=tables)
 
         elif self.label == "final":
-            print(f"Creating database dump for {self.label}/Load.")
+            self.log.info(f"Creating database dump for {self.label}/Load.")        
             self.export_dbs(tables=["dim_state", "dim_vehicle", "fact_vehicle_sales", "fact_vehicle_population"])
 
         else:
+            self.log.error("f \
+                Unknown export stage label: {self.label}. \
+                Expected one of: staging_1, staging_2, final \
+                Refer to export_db.py")
             raise ValueError(
-                f"Unknown export stage label: '{self.label}'. "
-                f"Expected one of: staging_1, staging_2, final"
+                f"Unknown export stage label: '{self.label}'.\
+                Refer to {self.log.category} logs for more information"
             )

@@ -1,13 +1,14 @@
 import re
-import numpy as np
-
+from logs.logger import ETL_Logger, ErrorCategory
 
 class DataTransformer:
     def __init__(self, df):
         self.df = df
+        log = ETL_Logger(ErrorCategory.GENERAL)
 
     def transform_columns(self):
-        """Cleaning Dataset -- normalize every column name into a safe, unquoted SQL identifier."""
+        self.log.info("Cleaning Dataset -- normalize every column name into a safe, unquoted SQL identifier.")
+        self.log.info("Transforming Columns: ")
         print("Transforming Columns: \n")
 
         new_columns = []

@@ -12,5 +12,8 @@
 .dvc/
 /home/jose/github-repo/Chevron-Vehicle-Prediction/.vscode
 src/app/elt/dbt_project
-src/app/elt/logs
+src/app/elt/logs/DATABASE
+src/app/elt/logs/DBT
+src/app/elt/logs/GENERAL
+src/app/elt/logs/VALIDATION
 src/app/elt/db/dumps

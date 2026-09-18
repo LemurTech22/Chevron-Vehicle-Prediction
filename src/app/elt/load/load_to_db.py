@@ -1,3 +1,5 @@
+from logs.logger import ErrorCategory, ETL_Logger
+
 from urllib.parse import urlparse
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
@@ -14,14 +16,18 @@ def database_config(config_path):
 
     with open(full_path, "r") as f:
         config = yaml.safe_load(f)
+
     project_root = os.path.dirname(os.path.dirname(full_path))
 
     csv_path = os.path.join(project_root, config["csv_path"])
     jar_path = os.path.join(project_root, config["postgres_jar_path"])
-
-    print("Loaded config:", config)
-    print("Loaded CSV path:", csv_path)
-
+    
+    log = ETL_Logger(ErrorCategory.DATABASE)
+    log.info("Opening Configuration File")
+    
+    
+    log.info(f"Loaded Config: {config}")
+    log.info(f"Loaded CSV path: {csv_path}")
     return config, csv_path, jar_path
 
 
@@ -40,6 +46,7 @@ class Database_Creation:
         self.user = config["db_user"]
         self.password = config["db_password"]
         self.db_url = jdbc_url
+        self.log = ETL_Logger(ErrorCategory.DATABASE)
 
 
     def create_database_if_exists(self):
@@ -58,17 +65,17 @@ class Database_Creation:
         exists = cur.fetchone()
 
         if not exists:
-            cur.execute(f'CREATE DATABASE "{self.db_name}"')
-            print(f"Created database: {self.db_name}")
+            self.log.info(f"Created DATABASE: {self.db_name}")
+            self.log.info(f"Created database: {self.db_name}")
         else:
-            print(f"Database {self.db_name} already exists")
+            self.log.info(f"Database: {self.db_name} already exists.")
 
         cur.close()
         conn.close()
 
     
     def spark_connection(self, df:DataFrame, table_name:str, mode:str):
-        print(f"Loading Spark Dataframe/SQL into '{table_name}' and '{mode}' to the Table.")
+        self.log.info(f"Loading Spark Dataframe/SQL into '{table_name}' and '{mode}' to the Table.")
         properties = {
             "user": self.user,
             "password": self.password,
@@ -83,6 +90,7 @@ class Database_Creation:
                 .options(**properties) \
                 .mode(mode) \
                 .save()
+            self.log.info("Write Complete")
         elif mode == "read":
             result_df = self.spark.read \
                 .format("jdbc") \
@@ -90,17 +98,19 @@ class Database_Creation:
                 .option("dbtable", table_name) \
                 .option(**properties) \
                 .load()
-            print("Read complete.")
+            self.log.info(f"Reading: {table_name}")
             return result_df
                 
         else: 
+            self.log.error(f"Database feature: {mode} is unavailable")
+            self.log.error(f"Expected append, overwrite, read")
+            self.log.error(f"Refer to spark_connection function.")
             raise ValueError(f"{mode} feature is unavailable. \n Expected: append, overwrite, read")
                 
         
     def load(self, df: DataFrame, table_name: str, mode="append"):
-        print(f"Loading Spark DataFrame into '{table_name}'...")
+        self.log.info(f"Loading Spark Dataframe into {table_name} ...")
         self.spark_connection(df, table_name, mode)
-        print("Load complete.")
 
     def helper_column_creation(self, new_df: DataFrame, table_name: str):
         
@@ -128,5 +138,5 @@ class Database_Creation:
             
     def join(self, new_df: DataFrame, table_name: str):
         self.helper_column_creation(new_df, table_name)
-        print(f"Union completed and '{table_name}' updated.")
+        self.log.info("Union completed and {table_name} updated.")
         

@@ -1,6 +1,8 @@
 # scripts/dbt/setup_dbt_project.py
 from pathlib import Path
 
+from logs.logger import ErrorCategory, ETL_Logger
+
 DBT_PROJECT_YML = """\
 name: 'chevron_vehicle_prediction'
 version: '1.0.0'
@@ -198,13 +200,13 @@ from {{ source('raw', 'raw_vehicle_sales') }}
 """
 
 def _write_if_missing(path: Path, content: str):
+    log = ETL_Logger(ErrorCategory.DBT)
     if path.exists():
-        print(f"Skipping (already exists): {path}")
+        log.info("Skipping path already exists: {path}")
         return
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content)
-    print(f"Created: {path}")
-
+    log.info(f"Created: {path}")
 
 def setup_dbt_project(project_dir: str):
     """
