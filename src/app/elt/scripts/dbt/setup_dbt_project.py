@@ -2,8 +2,8 @@
 from pathlib import Path
 
 from logs.logger import ErrorCategory, ETL_Logger
-from . import stage_sql_commands
-from . import mart_sql_commands
+from .sql_commands import stage_sql_commands
+from .sql_commands import mart_sql_commands
 
 def _write_if_missing(path: Path, content: str):
     log = ETL_Logger(ErrorCategory.DBT)
