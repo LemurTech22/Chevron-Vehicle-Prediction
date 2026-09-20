@@ -19,6 +19,8 @@ def setup_dbt_project(project_dir: str):
     root = Path(project_dir)
     base_stage_path = root / "models" / "staging"
     base_mart_path = root / "models" / "marts"
+    base_test_path = root / "tests" / "generic"
+    
     _write_if_missing(root / "dbt_project.yml", stage_sql_commands.DBT_PROJECT_YML)
     _write_if_missing(root / "profiles.yml", stage_sql_commands.PROFILES_YML)
     _write_if_missing(base_stage_path / "sources.yml", stage_sql_commands.SOURCES_YML)
@@ -30,6 +32,9 @@ def setup_dbt_project(project_dir: str):
     
     _write_if_missing(base_mart_path / "dbt_mart_project.yml", mart_sql_commands.MART_PROJECT_YAML)
     _write_if_missing(base_mart_path / "mart_ev_population.sql", mart_sql_commands.MART_BASE_SQL)
+    
+    base_test_path.mkdir(parents=True, exist_ok=True)
+    _write_if_missing(base_test_path / "test_value_range.sql", mart_sql_commands.TEST_VALUE_RANGE_SQL)
 """    _write_if_missing(base_mart_path / "")
     _write_if_missing(base_mart_path / "")
     _write_if_missing(base_mart_path / "")
@@ -37,3 +42,4 @@ def setup_dbt_project(project_dir: str):
     _write_if_missing(base_mart_path / "")
     _write_if_missing(base_mart_path / "")
 """
+

@@ -18,6 +18,7 @@ def run_dbt_build(project_dir: str, profile_dir:str):
                 "--project-dir", project_dir,
                 "--profiles-dir", profile_dir
                 ]
+    
     res: dbtRunnerResult = dbt.invoke(cli_args)
 
     return res

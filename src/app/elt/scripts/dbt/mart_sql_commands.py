@@ -7,13 +7,18 @@ models:
       - name: make
         tests:
           - accepted_values:
-              values: ['KIA', 'FORD', 'PORSCHE', 'TESLA', 'CHEVROLET']
+              arguments:
+                values: ['KIA', 'FORD', 'PORSCHE', 'TESLA', 'CHEVROLET']
       - name: msrp
         tests:
-          - not_null
+          - value_range:
+              min_value: 20000
+              max_value: 300000
       - name: model_year
         tests:
-          - not_null
+          - value_range:
+              min_value: 2010
+              max_value: 2026
 """
 
 
@@ -28,5 +33,16 @@ FROM {{ref('stg_ev_population')}}
 
 SELECT *
 FROM base   
-WHERE electric_range > 100 AND msrp > 10000 AND msrp < 200000
+WHERE electric_range > 100 AND msrp > 10000 AND msrp < 200000 AND model_year > 2010
+"""
+
+TEST_VALUE_RANGE_SQL = """\
+{% test value_range(model, column_name, min_value, max_value) %}
+
+select *
+from {{ model }}
+where {{ column_name }} < {{ min_value }}
+   or {{ column_name }} > {{ max_value }}
+
+{% endtest %}
 """
