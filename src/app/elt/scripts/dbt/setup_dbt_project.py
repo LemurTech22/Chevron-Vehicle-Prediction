@@ -2,7 +2,8 @@
 from pathlib import Path
 
 from logs.logger import ErrorCategory, ETL_Logger
-from . import sql_commands
+from . import stage_sql_commands
+from . import mart_sql_commands
 
 def _write_if_missing(path: Path, content: str):
     log = ETL_Logger(ErrorCategory.DBT)
@@ -14,20 +15,25 @@ def _write_if_missing(path: Path, content: str):
     log.info(f"Created: {path}")
 
 def setup_dbt_project(project_dir: str):
-    """
-    Idempotently scaffold a dbt project at `project_dir`.
-    Safe to call every run -- existing files are never overwritten,
-    only missing ones are created. This lets a fresh clone or a
-    Docker container get a working dbt project with zero manual setup,
-    while a developer's own edits to models are never clobbered.
-    """
+
     root = Path(project_dir)
-    _write_if_missing(root / "dbt_project.yml", sql_commands.DBT_PROJECT_YML)
-    _write_if_missing(root / "profiles.yml", sql_commands.PROFILES_YML)
-    _write_if_missing(root / "models" / "staging" / "sources.yml", sql_commands.SOURCES_YML)
-    _write_if_missing(root / "models" / "staging" / "stg_ev_population.sql", sql_commands.STG_EV_POPULATION_SQL)
-    _write_if_missing(root / "models" / "staging" / "stg_chevron_table.sql", sql_commands.STG_CHEVRON_SQL)
-    _write_if_missing(root / "models" / "staging" / "stg_fuel_consumption.sql", sql_commands.STG_FUEL_ECONOMY_SQL)
-    _write_if_missing(root / "models" / "staging" / "stg_vehicle_sales.sql", sql_commands.STG_VEHICLE_SALES_SQL)    
-    (root / "models" / "marts").mkdir(parents=True, exist_ok=True)
+    base_stage_path = root / "models" / "staging"
+    base_mart_path = root / "models" / "marts"
+    _write_if_missing(root / "dbt_project.yml", stage_sql_commands.DBT_PROJECT_YML)
+    _write_if_missing(root / "profiles.yml", stage_sql_commands.PROFILES_YML)
+    _write_if_missing(base_stage_path / "sources.yml", stage_sql_commands.SOURCES_YML)
+    _write_if_missing(base_stage_path / "stg_ev_population.sql", stage_sql_commands.STG_EV_POPULATION_SQL)
+    _write_if_missing(base_stage_path / "stg_chevron_table.sql", stage_sql_commands.STG_CHEVRON_SQL)
+    _write_if_missing(base_stage_path / "stg_fuel_consumption.sql", stage_sql_commands.STG_FUEL_ECONOMY_SQL)
+    _write_if_missing(base_stage_path / "stg_vehicle_sales.sql", stage_sql_commands.STG_VEHICLE_SALES_SQL)    
+    (base_mart_path).mkdir(parents=True, exist_ok=True)
     
+    _write_if_missing(base_mart_path / "dbt_mart_project.yml", mart_sql_commands.MART_PROJECT_YAML)
+    _write_if_missing(base_mart_path / "mart_ev_population.sql", mart_sql_commands.MART_BASE_SQL)
+"""    _write_if_missing(base_mart_path / "")
+    _write_if_missing(base_mart_path / "")
+    _write_if_missing(base_mart_path / "")
+    _write_if_missing(base_mart_path / "")
+    _write_if_missing(base_mart_path / "")
+    _write_if_missing(base_mart_path / "")
+"""

@@ -16,7 +16,7 @@ models:
     staging:
       +materialized: view
     marts:
-      +materialized: table
+      +materialized: materialized_view
 """
 
 PROFILES_YML = """\
@@ -71,21 +71,19 @@ from {{ source('raw', 'raw_ev_population') }}
 
 """
 
-STG_CHEVRON_SQL = """\ 
-  SELECT
-      date, 
-      vehicle_category, 
-      gvwr_class,
-      fuel_type,
-      model_year, 
-      fuel_technology,
-      electric_mile_range,
-      number_of_vehicles_registered_at_the_same_address,
-      region,
-      vehicle_population
-    
+STG_CHEVRON_SQL = """\
+select
+    date,
+    vehicle_category,
+    gvwr_class,
+    fuel_type,
+    model_year,
+    fuel_technology,
+    electric_mile_range,
+    number_of_vehicles_registered_at_the_same_address,
+    region,
+    vehicle_population
 from {{ source('raw', 'chevron_table') }}
-
 """
 
 STG_FUEL_ECONOMY_SQL = """ \
