@@ -65,8 +65,8 @@ class Database_Creation:
         exists = cur.fetchone()
 
         if not exists:
+            cur.execute(f"CREATE DATABASE {self.db_name}")
             self.log.info(f"Created DATABASE: {self.db_name}")
-            self.log.info(f"Created database: {self.db_name}")
         else:
             self.log.info(f"Database: {self.db_name} already exists.")
 
