@@ -1,5 +1,6 @@
-database_url: "jdbc:postgresql://localhost:5432/chevron_data"
-db_user: "postgres"
-db_password: "Jconde2237!"
-csv_path: "src/app/datasets/raw/Chevron_data.csv"
+database_url: !ENV DATABASE_URL
+db_user: !ENV DB_USER
+db_password: !ENV DB_PASSWORD
+
+csv_path: "src/datasets/raw/Chevron_data.csv"
 postgres_jar_path: "spark_jars/postgresql-42.7.8.jar"
