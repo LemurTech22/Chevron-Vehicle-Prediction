@@ -9,18 +9,22 @@ from scripts.db.export_db import database_export
 from logs.logger import ETL_Logger, ErrorCategory
 
 
-def helper_pipeline(db, local_csv_path):
-    df = extract_data(local_csv_path)
+def _load_dataset(db, df, table_name: str, transform_method: str):
     transformer = DataTransformer(df)
-    cleaned = transformer.get_cleaned_data()
-    db.load(cleaned, table_name="chevron_table")
+    transformed = getattr(transformer, transform_method)()
+    db.load(transformed, table_name=table_name)
+    print(f"Loaded {table_name}")
 
-    new_data_list = kaggle_extract_data()
-    for new_table_name, df in new_data_list:
-        transformer = DataTransformer(df)
-        transformed = transformer.add_data()
-        db.load(transformed, table_name=new_table_name)
-        print(f"Loaded {new_table_name}")
+
+def helper_pipeline(db, local_csv_path):
+    chevron_df = extract_data(local_csv_path)
+    kaggle_data = kaggle_extract_data()
+
+    datasets = [("chevron_table", chevron_df, "get_cleaned_data")]
+    datasets += [(table_name, df, "add_data") for table_name, df in kaggle_data]
+
+    for table_name, df, transform_method in datasets:
+        _load_dataset(db, df, table_name, transform_method)
 
 
 def helper_dbt():

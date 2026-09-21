@@ -82,22 +82,23 @@ def is_up_to_date(ds, state, extract_to):
     
     return (local_updated == remote_updated and already_extracted), remote_updated
 
+def _extract(zip_path, ds, extract_to):
+    with zipfile.ZipFile(zip_path, "r") as z:
+        log.info(f"Extracting {ds} to {extract_to}")
+        z.extractall(extract_to) 
+        
 def download_and_extract(ds, zip_path, extract_to, up_to_date):
-
+    
     if not os.path.exists(extract_to) and not up_to_date:
         log.info(f"Creating file directory: {extract_to}")
         os.makedirs(extract_to, exist_ok=True)
         _api.dataset_download_files(ds, path=EXTERNAL_DIRECTORY, force=True)
-        with zipfile.ZipFile(zip_path, "r") as z:
-            log.info(f"Extracting {ds} to {extract_to}")
-            z.extractall(extract_to)
+        _extract(zip_path,ds,extract_to)
         
         log.info(f"Downloading (changed): {ds}")
     elif not up_to_date:
         _api.dataset_download_files(ds, path=EXTERNAL_DIRECTORY, force=True)
-        with zipfile.ZipFile(zip_path, "r") as z:
-            log.info(f"Extracting {ds} to {extract_to}")
-            z.extractall(extract_to)    
+        _extract(zip_path,ds,extract_to)
     else:
         log.info(f"Path exists: {extract_to}")
         shutil.rmtree(extract_to)
