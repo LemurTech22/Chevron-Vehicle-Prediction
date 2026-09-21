@@ -4,13 +4,13 @@ from kaggle.api.kaggle_api_extended import KaggleApi
 from logs.logger import ETL_Logger, ErrorCategory
 from dotenv import load_dotenv
 
-import zipfile, os, glob, time, json, shutil
+import zipfile, os, glob, json, shutil
 
 
 load_dotenv()
 
 STATE_FILE = "kaggle_dataset_state.json"
-EXTERNAL_DIRECTORY = "../../datasets/external"
+EXTERNAL_DIRECTORY = "datasets/external"
 EXTRACTED_ROOT = os.path.join(EXTERNAL_DIRECTORY, "extracted")
 
 # Each dataset gets its own staging table — no shared/forced schema across datasets.
@@ -82,20 +82,26 @@ def is_up_to_date(ds, state, extract_to):
     
     return (local_updated == remote_updated and already_extracted), remote_updated
 
-def download_and_extract(ds, zip_path, extract_to):
-    log.info(f"Downloading (changed): {ds}")
-    _api.dataset_download_files(ds, path=EXTERNAL_DIRECTORY, force=True)
+def download_and_extract(ds, zip_path, extract_to, up_to_date):
 
-    if os.path.exists(extract_to):
+    if not os.path.exists(extract_to) and not up_to_date:
+        log.info(f"Creating file directory: {extract_to}")
+        os.makedirs(extract_to, exist_ok=True)
+        _api.dataset_download_files(ds, path=EXTERNAL_DIRECTORY, force=True)
+        with zipfile.ZipFile(zip_path, "r") as z:
+            log.info(f"Extracting {ds} to {extract_to}")
+            z.extractall(extract_to)
+        
+        log.info(f"Downloading (changed): {ds}")
+    elif not up_to_date:
+        _api.dataset_download_files(ds, path=EXTERNAL_DIRECTORY, force=True)
+        with zipfile.ZipFile(zip_path, "r") as z:
+            log.info(f"Extracting {ds} to {extract_to}")
+            z.extractall(extract_to)    
+    else:
         log.info(f"Path exists: {extract_to}")
         shutil.rmtree(extract_to)
 
-    log.info(f"Creating file directory: {extract_to}")
-    os.makedirs(extract_to, exist_ok=True)
-
-    with zipfile.ZipFile(zip_path, "r") as z:
-        log.info(f"Extracting {ds} to {extract_to}")
-        z.extractall(extract_to)
 
 def load_csvs_as_dataframes(extract_to):
     dfs = []
@@ -118,10 +124,9 @@ def kaggle_extract_data(datasets=None):
     state = load_state()
     data_completed = []
     results = []  # list of (table_name, dataframe)
-    log.info(f"Extracting {datasets} from Kaggle")
     for ds in datasets:
-        log.info("Extracting dataset paths")
         _, zip_path, extract_to = get_dataset_paths(ds)
+        log.info("Checking if datasets are up to date")
         up_to_date, remote_updated = is_up_to_date(ds, state, extract_to)
 
         if up_to_date:
@@ -130,10 +135,10 @@ def kaggle_extract_data(datasets=None):
         
         else:
             log.info(f"Downloading {ds} from Kaggle please wait.")
-            download_and_extract(ds, zip_path, extract_to)
+            download_and_extract(ds, zip_path, extract_to, up_to_date)
             state[ds] = remote_updated
             data_completed.append(ds)
-            log.info(f"{ds} finished extracting")
+            log.info(f"Finished Downloading and extracting {ds}")
 
         table_name = DATASET_TABLE_MAP[ds]
         for df in load_csvs_as_dataframes(extract_to):
@@ -141,5 +146,4 @@ def kaggle_extract_data(datasets=None):
         log.info(f"Finished loading {ds}")
         
     save_state(state)
-    log.info(f"Finished Downloading and extracting {datasets}")
     return results
