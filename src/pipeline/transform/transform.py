@@ -30,6 +30,7 @@ class DataTransformer:
 
     def replace_na(self):
         """Filling in missing values"""
+        self.log.info("Filling in missing values.")
         print("Filling Missing values")
         
         replacement_values = ['Not Applicable','Unknown']
@@ -44,11 +45,11 @@ class DataTransformer:
                     ).otherwise(col(column))
                 )
 
-    def drop_columns(self):
-        print("Dropping Tables: ")
-        self.df = self.df.drop('number_of_vehicles_registered_at_the_same_address', 'region')
-        print(f"Columns after Cleaning: {self.df.columns}")
-
+    def drop_duplicates(self):
+        print(f"Dropping duplicates for {self.df.columns}")
+        self.log.info(f"Dropping duplicates for {self.df.columns}")
+        self.df.dropDuplicates()
+        
     def drop_unwanted_columns(self):
         """Drops Unnecessary Columns"""
         print("Dropping unwanted columns...")
@@ -66,9 +67,5 @@ class DataTransformer:
     def get_cleaned_data(self):
         self.transform_columns()
         self.replace_na()
-        return self.df
-
-    def add_data(self):
-        self.transform_columns()
-        self.replace_na()
+        self.drop_duplicates()
         return self.df

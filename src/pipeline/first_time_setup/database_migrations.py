@@ -21,7 +21,7 @@ def helper_pipeline(db, local_csv_path):
     kaggle_data = kaggle_extract_data()
 
     datasets = [("chevron_table", chevron_df, "get_cleaned_data")]
-    datasets += [(table_name, df, "add_data") for table_name, df in kaggle_data]
+    datasets += [(table_name, df, "get_cleaned_data") for table_name, df in kaggle_data]
 
     for table_name, df, transform_method in datasets:
         _load_dataset(db, df, table_name, transform_method)
