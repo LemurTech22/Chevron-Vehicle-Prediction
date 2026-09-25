@@ -1,5 +1,7 @@
 import re
+import numpy as np
 from logs.logger import ETL_Logger, ErrorCategory
+from pyspark.sql.functions import col, when
 
 class DataTransformer:
     def __init__(self, df):
@@ -26,10 +28,21 @@ class DataTransformer:
             self.df = self.df.withColumn(col_name, self.df[col_name].cast(("string")))
         print(self.df.columns)
 
-    #def replace_na(self):
+    def replace_na(self):
         """Filling in missing values"""
-      #  print("Filling Missing values")
-      #  self.df = self.df.replace(['Not Applicable','Unknown'], np.nan)
+        print("Filling Missing values")
+        
+        replacement_values = ['Not Applicable','Unknown']
+        
+        for column in self.df.columns:
+            if self.df.schema[column].dataType.simpleString() == "string":
+                self.df = self.df.withColumn(
+                    column,
+                    when(
+                        col(column).isin(replacement_values),
+                        None
+                    ).otherwise(col(column))
+                )
 
     def drop_columns(self):
         print("Dropping Tables: ")
@@ -52,10 +65,10 @@ class DataTransformer:
 
     def get_cleaned_data(self):
         self.transform_columns()
-        #self.replace_na()
+        self.replace_na()
         return self.df
 
     def add_data(self):
         self.transform_columns()
-        #self.replace_na()
+        self.replace_na()
         return self.df

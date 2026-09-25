@@ -15,7 +15,6 @@ EXTRACTED_ROOT = os.path.join(EXTERNAL_DIRECTORY, "extracted")
 
 # Each dataset gets its own staging table — no shared/forced schema across datasets.
 DATASET_TABLE_MAP = {
-    'tanishqdublish/vehcile-fuel-consumption': 'raw_fuel_consumption',
     'ricardobj/electric-vehicle-population': 'raw_ev_population',
     'syedanwarafridi/vehicle-sales-data': 'raw_vehicle_sales',
     'sahirmaharajj/fuel-economy': 'raw_fuel_economy',
