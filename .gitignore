@@ -17,6 +17,6 @@ src/logs/GENERAL
 src/logs/VALIDATION
 src/dbt_project
 src/db
-src/datasets
+src/datasets/external
 src/kaggle_datasets_state.json
 /home/jose/github-repo/Chevron-Vehicle-Prediction/.vscode
