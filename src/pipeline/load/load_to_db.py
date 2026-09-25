@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from yaml_env_tag import add_env_tag
 
 _Loader = add_env_tag(yaml.SafeLoader)
-
+        
 
 def database_config(config_path):
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -52,6 +52,21 @@ class Database_Creation:
         self.password = config["db_password"]
         self.db_url = jdbc_url
         self.log = ETL_Logger(ErrorCategory.DATABASE)
+
+    def require_env_var(self, *names:str) -> dict:
+        load_dotenv()
+        log = ETL_Logger(ErrorCategory.VALIDATION)
+
+        all_present = True
+        for name in names:
+            value = os.environ.get(name)
+            if value is None or value.strip() == "":
+                log.error(f"Missing required environment variable: {name}")
+                all_present = False
+        if not all_present:
+            raise EnvironmentError("One or more required environment variables are missing. Check the errors above.")
+        else: 
+            log.info("All environment variables exists moving onto pipeline.")
 
     def create_database_if_exists(self):
         print("Connecting to database ...")

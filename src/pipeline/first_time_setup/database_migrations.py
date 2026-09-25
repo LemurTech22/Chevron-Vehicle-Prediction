@@ -53,6 +53,11 @@ def setup():
 
     db = Database_Creation(spark, config)
     log = ETL_Logger(ErrorCategory.DATABASE)
+    
+    #env check
+    log.info("Checking if env's exists")
+    db.require_env_var("KAGGLE_API_TOKEN","DB_HOST", "DB_USER", "DB_PASSWORD", "DB_PORT", "DB_NAME", "OUTPUT_DIR")
+    
     log.info("Checking if database exists ...")
     db.create_database_if_exists()
 
