@@ -1,12 +1,9 @@
 from logs.logger import ErrorCategory, ETL_Logger
 
-from urllib.parse import urlparse
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StringType
-from pyspark.sql.functions import col as spark_col, lit, sha2, concat_ws
 import os
 import yaml
 from dotenv import load_dotenv
@@ -34,9 +31,6 @@ def database_config(config_path):
     log.info(f"Loaded Config: {config}")
     log.info(f"Loaded CSV path: {csv_path}")
     return config, csv_path, jar_path
-
-#def add_row_hash(df: DataFrame, hash_col: str = "_row_hash") -> DataFrame:
- #   return df.withColumn(hash_col, sha2(concat_ws("||", *df.columns), 256))
 
 class Database_Creation:
     def __init__(self, spark: SparkSession, config: dict):
@@ -160,16 +154,13 @@ class Database_Creation:
         existing_keys = self.spark_connection(None, table_name, mode="read") \
             .select(*key_cols).distinct()
 
-        # Null-safe equality: standard `=` treats NULL == NULL as unknown, so a
-        # row with a null key column would never match itself on rerun and
-        # would re-insert forever. eqNullSafe (<=>) fixes that.
         join_condition = None
         for k in key_cols:
             cond = new_df[k].eqNullSafe(existing_keys[k])
             join_condition = cond if join_condition is None else (join_condition & cond)
 
         to_insert = new_df.join(existing_keys, on=join_condition, how="left_anti") \
-                        .select(new_df["*"])  # drop existing_keys' duplicate columns
+                        .select(new_df["*"])
 
         inserted_count = to_insert.count()
         if inserted_count == 0:
@@ -178,3 +169,4 @@ class Database_Creation:
 
         self.load(to_insert, table_name, mode="append")
         self.log.info(f"{table_name}: inserted {inserted_count} new row(s).")
+        

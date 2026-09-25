@@ -1,5 +1,4 @@
 import re
-import numpy as np
 from logs.logger import ETL_Logger, ErrorCategory
 from pyspark.sql.functions import col, when
 
@@ -16,9 +15,9 @@ class DataTransformer:
         new_columns = []
         for c in self.df.columns:
             clean = c.strip().lower()
-            clean = re.sub(r"[^a-z0-9]+", "_", clean)   # anything not a letter/digit -> underscore
-            clean = clean.strip("_")                     # trim leading/trailing underscores
-            if clean and clean[0].isdigit():              # SQL identifiers can't start with a digit
+            clean = re.sub(r"[^a-z0-9]+", "_", clean)
+            clean = clean.strip("_")                     
+            if clean and clean[0].isdigit():              
                 clean = f"col_{clean}"
             new_columns.append(clean)
 
