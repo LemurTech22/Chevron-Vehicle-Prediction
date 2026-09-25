@@ -33,22 +33,18 @@ class DataTransformer:
         self.log.info("Filling in missing values.")
         print("Filling Missing values")
         
-        replacement_values = ['Not Applicable','Unknown']
-        
+        replacement_values = ['Not Applicable', 'Unknown']
         for column in self.df.columns:
             if self.df.schema[column].dataType.simpleString() == "string":
                 self.df = self.df.withColumn(
                     column,
-                    when(
-                        col(column).isin(replacement_values),
-                        None
-                    ).otherwise(col(column))
+                    when(col(column).isin(replacement_values), None).otherwise(col(column))
                 )
 
     def drop_duplicates(self):
         print(f"Dropping duplicates for {self.df.columns}")
         self.log.info(f"Dropping duplicates for {self.df.columns}")
-        self.df.dropDuplicates()
+        self.df = self.df.dropDuplicates()
         
     def drop_unwanted_columns(self):
         """Drops Unnecessary Columns"""

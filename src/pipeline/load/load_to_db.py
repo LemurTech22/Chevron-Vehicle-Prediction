@@ -6,7 +6,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StringType
-from pyspark.sql.functions import col as spark_col, lit
+from pyspark.sql.functions import col as spark_col, lit, sha2, concat_ws
 import os
 import yaml
 from dotenv import load_dotenv
@@ -35,6 +35,8 @@ def database_config(config_path):
     log.info(f"Loaded CSV path: {csv_path}")
     return config, csv_path, jar_path
 
+#def add_row_hash(df: DataFrame, hash_col: str = "_row_hash") -> DataFrame:
+ #   return df.withColumn(hash_col, sha2(concat_ws("||", *df.columns), 256))
 
 class Database_Creation:
     def __init__(self, spark: SparkSession, config: dict):
@@ -68,6 +70,22 @@ class Database_Creation:
         else: 
             log.info("All environment variables exists moving onto pipeline.")
 
+
+    def table_exists(self, table_name: str) -> bool:
+            conn = psycopg2.connect(
+                dbname=self.db_name, user=self.user, password=self.password,
+                host=self.host, port=self.port
+            )
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = %s)",
+                (table_name,)
+            )
+            exists = cur.fetchone()[0]
+            cur.close()
+            conn.close()
+            return exists
+    
     def create_database_if_exists(self):
         print("Connecting to database ...")
         conn = psycopg2.connect(
@@ -128,30 +146,35 @@ class Database_Creation:
         self.log.info(f"Loading Spark Dataframe into {table_name} ...")
         self.spark_connection(df, table_name, mode)
 
-    def helper_column_creation(self, new_df: DataFrame, table_name: str):
-        existing_df = self.spark_connection(None, table_name, mode="read")
-        existing_cols = existing_df.columns
+    def join(self, new_df: DataFrame, table_name: str, key_cols: list):
+        if not key_cols:
+            raise ValueError(f"key_cols is required for {table_name}.")
 
-        new_cols = new_df.columns
-        all_cols = list(set(existing_cols) | set(new_cols))
+        new_df = new_df.dropDuplicates(key_cols)
 
-        for c in all_cols:
-            if c not in existing_cols:
-                existing_df = existing_df.withColumn(c, lit(None).cast(StringType()))
-            else:
-                existing_df = existing_df.withColumn(c, spark_col(c).cast(StringType()))
-            if c not in new_cols:
-                new_df = new_df.withColumn(c, lit(None).cast(StringType()))
-            else:
-                new_df = new_df.withColumn(c, spark_col(c).cast(StringType()))
+        if not self.table_exists(table_name):
+            self.log.info(f"{table_name} does not exist yet — initial load.")
+            self.load(new_df, table_name, mode="append")
+            return
 
-        existing_df = existing_df.select(all_cols)
-        new_df = new_df.select(all_cols)
-        combined_df = existing_df.unionByName(new_df)
+        existing_keys = self.spark_connection(None, table_name, mode="read") \
+            .select(*key_cols).distinct()
 
-        self.spark_connection(combined_df, table_name, mode="overwrite")
+        # Null-safe equality: standard `=` treats NULL == NULL as unknown, so a
+        # row with a null key column would never match itself on rerun and
+        # would re-insert forever. eqNullSafe (<=>) fixes that.
+        join_condition = None
+        for k in key_cols:
+            cond = new_df[k].eqNullSafe(existing_keys[k])
+            join_condition = cond if join_condition is None else (join_condition & cond)
 
-    def join(self, new_df: DataFrame, table_name: str):
-        self.helper_column_creation(new_df, table_name)
-        self.log.info(f"Union completed and {table_name} updated.")
-        
+        to_insert = new_df.join(existing_keys, on=join_condition, how="left_anti") \
+                        .select(new_df["*"])  # drop existing_keys' duplicate columns
+
+        inserted_count = to_insert.count()
+        if inserted_count == 0:
+            self.log.info(f"{table_name}: no new rows to insert.")
+            return
+
+        self.load(to_insert, table_name, mode="append")
+        self.log.info(f"{table_name}: inserted {inserted_count} new row(s).")
