@@ -98,7 +98,8 @@ class DBT_Project:
                 (base_mart_path / "dbt_mart_project.yml", mart_sql_commands.MART_PROJECT_YAML),
             ],
             "mart": [
-                (base_mart_path / "mart_ev_population.sql", mart_sql_commands.MART_BASE_SQL),
+                (base_mart_path / "mart_ev_population.sql", mart_sql_commands.EV_MART_BASE_SQL),
+                (base_mart_path / "mart_vehicle_population.sql", mart_sql_commands.CHEVRON_MART_BASE_SQL),
             ],
         }
         self.helper_dbt(mart_args, stage="mart")
