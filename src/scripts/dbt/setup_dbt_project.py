@@ -101,6 +101,7 @@ class DBT_Project:
                 (base_mart_path / "mart_ev_population.sql", mart_sql_commands.EV_MART_BASE_SQL),
                 (base_mart_path / "mart_vehicle_population.sql", mart_sql_commands.CHEVRON_MART_BASE_SQL),
                 (base_mart_path / "mart_vehicle_fuel_consumption.sql", mart_sql_commands.MART_VEHICLE_FUEL_CONSUMPTION),
+                (base_mart_path / "mart_vehicle_sales.sql", mart_sql_commands.MART_VEHICLE_SALES),
             ],
         }
         self.helper_dbt(mart_args, stage="mart")

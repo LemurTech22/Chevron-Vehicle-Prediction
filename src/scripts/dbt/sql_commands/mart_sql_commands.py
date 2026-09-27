@@ -290,6 +290,44 @@ models:
               arguments:
                 min_value: 0
                 max_value: 400
+
+  - name: mart_vehicle_sales
+    columns:
+      - name: model_year
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 2010
+                max_value: 2026
+      - name: make
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick', 'Cadillac', 'Chevrolet', 'Chrysler', 'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford', 'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu', 'Jaguar', 'Jeep', 'Kia', 'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 'Mercury', 'MINI', 'Mitsubishi', 'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab', 'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki', 'Tesla', 'Toyota', 'Volkswagen', 'Volvo']
+      - name: model
+        tests:
+          - not_null
+      - name: trim
+      - name: body
+      - name: transmission
+      - name: vin
+      - name: state
+      - name: condition
+      - name: odometer
+      - name: color
+      - name: interior
+      - name: seller
+      - name: mmr
+      - name: sellingprice
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 0
+                max_value: 200000
+      - name: saledate
 """
 
 
@@ -337,21 +375,123 @@ WHERE vehicle_model_year >= 2010
 
 MART_VEHICLE_FUEL_CONSUMPTION= """
 with base as (
-  SELECT 
-    *, 
-    CAST(NULLIF(REPLACE(year::text, ',', ''), '') AS INT) AS model_year,
-    CAST(NULLIF(REPLACE(year::text, ',', ''), '') AS INT) AS average_range 
+  SELECT *,
+  CAST(NULLIF(REPLACE(year::text, ',', ''), '') AS INT) AS model_year,
+  CAST(NULLIF(REPLACE(range_ft1::text, ',', ''), '') AS INT) AS vehicle_range
   FROM {{ref('stg_fuel_consumption')}}
   )
   
 SELECT * 
 FROM base  
 WHERE 
-  model_year >= 2010 
+  model_year > 2010 
 AND 
-  average_range > 0;
+  vehicle_range > 0;  
 """
 
+
+
+MART_VEHICLE_SALES = """\
+with base as (
+    SELECT
+      CAST(NULLIF(REPLACE(year::text, ',', ''), '') AS INT) AS model_year,
+      CASE LOWER(TRIM(make))
+        WHEN 'acura' THEN 'Acura'
+        WHEN 'airstream' THEN 'Airstream'
+        WHEN 'aston martin' THEN 'Aston Martin'
+        WHEN 'audi' THEN 'Audi'
+        WHEN 'bentley' THEN 'Bentley'
+        WHEN 'bmw' THEN 'BMW'
+        WHEN 'buick' THEN 'Buick'
+        WHEN 'cadillac' THEN 'Cadillac'
+        WHEN 'chevrolet' THEN 'Chevrolet'
+        WHEN 'chev truck' THEN 'Chevrolet'
+        WHEN 'chrysler' THEN 'Chrysler'
+        WHEN 'daewoo' THEN 'Daewoo'
+        WHEN 'dodge' THEN 'Dodge'
+        WHEN 'dodge tk' THEN 'Dodge'
+        WHEN 'ferrari' THEN 'Ferrari'
+        WHEN 'fiat' THEN 'FIAT'
+        WHEN 'fisker' THEN 'Fisker'
+        WHEN 'ford' THEN 'Ford'
+        WHEN 'ford tk' THEN 'Ford'
+        WHEN 'ford truck' THEN 'Ford'
+        WHEN 'geo' THEN 'Geo'
+        WHEN 'gmc' THEN 'GMC'
+        WHEN 'gmc truck' THEN 'GMC'
+        WHEN 'honda' THEN 'Honda'
+        WHEN 'hummer' THEN 'HUMMER'
+        WHEN 'hyundai' THEN 'Hyundai'
+        WHEN 'hyundai tk' THEN 'Hyundai'
+        WHEN 'infiniti' THEN 'Infiniti'
+        WHEN 'isuzu' THEN 'Isuzu'
+        WHEN 'jaguar' THEN 'Jaguar'
+        WHEN 'jeep' THEN 'Jeep'
+        WHEN 'kia' THEN 'Kia'
+        WHEN 'lamborghini' THEN 'Lamborghini'
+        WHEN 'land rover' THEN 'Land Rover'
+        WHEN 'landrover' THEN 'Land Rover'
+        WHEN 'lexus' THEN 'Lexus'
+        WHEN 'lincoln' THEN 'Lincoln'
+        WHEN 'lotus' THEN 'Lotus'
+        WHEN 'maserati' THEN 'Maserati'
+        WHEN 'mazda' THEN 'Mazda'
+        WHEN 'mazda tk' THEN 'Mazda'
+        WHEN 'mercedes' THEN 'Mercedes-Benz'
+        WHEN 'mercedes-b' THEN 'Mercedes-Benz'
+        WHEN 'mercedes-benz' THEN 'Mercedes-Benz'
+        WHEN 'mercury' THEN 'Mercury'
+        WHEN 'mini' THEN 'MINI'
+        WHEN 'mitsubishi' THEN 'Mitsubishi'
+        WHEN 'nissan' THEN 'Nissan'
+        WHEN 'oldsmobile' THEN 'Oldsmobile'
+        WHEN 'plymouth' THEN 'Plymouth'
+        WHEN 'pontiac' THEN 'Pontiac'
+        WHEN 'porsche' THEN 'Porsche'
+        WHEN 'ram' THEN 'Ram'
+        WHEN 'rolls-royce' THEN 'Rolls-Royce'
+        WHEN 'saab' THEN 'Saab'
+        WHEN 'saturn' THEN 'Saturn'
+        WHEN 'scion' THEN 'Scion'
+        WHEN 'smart' THEN 'smart'
+        WHEN 'subaru' THEN 'Subaru'
+        WHEN 'suzuki' THEN 'Suzuki'
+        WHEN 'tesla' THEN 'Tesla'
+        WHEN 'toyota' THEN 'Toyota'
+        WHEN 'volkswagen' THEN 'Volkswagen'
+        WHEN 'vw' THEN 'Volkswagen'
+        WHEN 'volvo' THEN 'Volvo'
+        ELSE NULL  -- catches junk like 'dot' and any future unrecognized value;
+                   -- filtered out below by make IS NOT NULL
+      END AS make,
+      model,
+      trim,
+      body,
+      transmission,
+      vin,
+      state,
+      condition,
+      odometer,
+      color,
+      interior,
+      seller,
+      mmr,
+      CAST(NULLIF(REPLACE(sellingprice::text, ',', ''), '') AS INT) AS sellingprice,
+      saledate
+    FROM {{ ref('stg_vehicle_sales') }}
+)
+
+SELECT *
+FROM base
+WHERE
+    model_year IS NOT NULL
+    AND model_year >= 2010
+    AND make IS NOT NULL
+    AND model IS NOT NULL
+    AND sellingprice IS NOT NULL
+    AND sellingprice >= 1000
+    AND sellingprice <= 200000
+"""
 
 
 TEST_VALUE_RANGE_SQL = """\
