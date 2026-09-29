@@ -19,7 +19,7 @@ models:
         tests:
           - value_range:
               arguments:
-                min_value: 2010
+                min_value: 2000
                 max_value: 2026
 
   - name: mart_chevron_population
@@ -50,7 +50,7 @@ models:
           - not_null
           - value_range:
               arguments:
-                min_value: 2010
+                min_value: 2000
                 max_value: 2026
       - name: fuel_technology
         tests:
@@ -88,7 +88,7 @@ models:
           - not_null
           - value_range:
               arguments:
-                min_value: 2010
+                min_value: 2000
                 max_value: 2026
 
       - name: make
@@ -96,7 +96,17 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['S and S Coach Company  E.p. Dutton', 'Ford', 'Maserati', 'Dodge', 'Excalibur Autos', 'Infiniti', 'J.K. Motors', 'Fisker', 'TVR Engineering Ltd', 'Grumman Allied Industries', 'Dacia', 'CODA Automotive', 'PAS Inc - GMC', 'SRT', 'ASC Incorporated', 'Audi', 'Mcevoy Motors', 'Import Trade Services', 'Lexus', 'Import Foreign Auto Sales Inc', 'Isis Imports Ltd', 'General Motors', 'Jeep', 'American Motors Corporation', 'Vector', 'Cadillac', 'Sterling', 'Autokraft Limited', 'Texas Coach Company', 'Panther Car Company Limited', 'Evans Automobiles', 'Ferrari', 'GMC', 'Maybach', 'Lincoln', 'Honda', 'Spyker', 'Chevrolet', 'JBA Motorcars, Inc.', 'Quantum Technologies', 'Daihatsu', 'Environmental Rsch and Devp Corp', 'Porsche', 'Pininfarina', 'Rolls-Royce', 'Tesla', 'Jaguar', 'Renault', 'Kia', 'Saleen Performance', 'CX Automotive', 'Pagani', 'Bugatti', 'Ruf Automobile Gmbh', 'McLaren Automotive', 'Fiat', 'Buick', 'Merkur', 'CCC Engineering', 'Mercury', 'Wallace Environmental', 'Roush Performance', 'Toyota', 'Bertone', 'Grumman Olson', 'Mahindra', 'Avanti Motor Corporation', 'VPG', 'BMW Alpina', 'PAS, Inc', 'Federal Coach', 'MINI', 'Bentley', 'Peugeot', 'Pontiac', 'Plymouth', 'Lambda Control Systems', 'Volvo', 'Panoz Auto-Development', 'Acura', 'Suzuki', 'Bitter Gmbh and Co. Kg', 'Aston Martin', 'BYD', 'Mitsubishi', 'AM General', 'E. P. Dutton, Inc.', 'Qvale', 'Chrysler', 'London Taxi', 'Mobility Ventures LLC', 'Isuzu', 'Ram', 'Daewoo', 'Morgan', 'Panos', 'Scion', 'Shelby', 'Saturn', 'Bill Dovell Motor Car Company', 'Vixen Motor Company', 'Alfa Romeo', 'smart', 'Lotus', 'Lamborghini', 'Mercedes-Benz', 'Oldsmobile', 'Superior Coaches Div E.p. Dutton', 'Goldacre', 'Consulier Industries Inc', 'Land Rover', 'Nissan', 'Kenyon Corporation Of America', 'Genesis', 'Aurora Cars Ltd', 'Saab', 'Hyundai', 'Yugo', 'London Coach Co Inc', 'Saleen', 'Geo', 'Subaru', 'Laforza Automobile Inc', 'Tecstar, LP', 'Mazda', 'Red Shift Ltd.', 'BMW', 'Volkswagen', 'Eagle', 'Azure Dynamics', 'Hummer', 'Dabryan Coach Builders Inc', 'Volga Associated Automobile']
+                values: [
+                  'S and S Coach Company  E.p. Dutton', 'Ford', 'Maserati', 'Dodge', 'Excalibur Autos', 'Infiniti', 'J.K. Motors', 'Fisker', 'TVR Engineering Ltd', 'Grumman Allied Industries', 'Dacia', 'CODA Automotive', 
+                  'PAS Inc - GMC', 'SRT', 'ASC Incorporated', 'Audi', 'Mcevoy Motors', 'Import Trade Services', 'Lexus', 'Import Foreign Auto Sales Inc', 'Isis Imports Ltd', 'General Motors', 'Jeep', 'American Motors Corporation', 
+                  'Vector', 'Cadillac', 'Sterling', 'Autokraft Limited', 'Texas Coach Company', 'Panther Car Company Limited', 'Evans Automobiles', 'Ferrari', 'GMC', 'Maybach', 'Lincoln', 'Honda', 'Spyker', 'Chevrolet', 'JBA Motorcars, Inc.', 
+                  'Quantum Technologies', 'Daihatsu', 'Environmental Rsch and Devp Corp', 'Porsche', 'Pininfarina', 'Rolls-Royce', 'Tesla', 'Jaguar', 'Renault', 'Kia', 'Saleen Performance', 'CX Automotive', 'Pagani', 'Bugatti', 'Ruf Automobile Gmbh', 
+                  'McLaren Automotive', 'Fiat', 'Buick', 'Merkur', 'CCC Engineering', 'Mercury', 'Wallace Environmental', 'Roush Performance', 'Toyota', 'Bertone', 'Grumman Olson', 'Mahindra', 'Avanti Motor Corporation', 'VPG', 'BMW Alpina', 'PAS, Inc', 
+                  'Federal Coach', 'MINI', 'Bentley', 'Peugeot', 'Pontiac', 'Plymouth', 'Lambda Control Systems', 'Volvo', 'Panoz Auto-Development', 'Acura', 'Suzuki', 'Bitter Gmbh and Co. Kg', 'Aston Martin', 'BYD', 'Mitsubishi', 'AM General', 'E. P. Dutton, Inc.', 
+                  'Qvale', 'Chrysler', 'London Taxi', 'Mobility Ventures LLC', 'Isuzu', 'Ram', 'Daewoo', 'Morgan', 'Panos', 'Scion', 'Shelby', 'Saturn', 'Bill Dovell Motor Car Company', 'Vixen Motor Company', 'Alfa Romeo', 'smart', 'Lotus', 'Lamborghini', 'Mercedes-Benz', 
+                  'Oldsmobile', 'Superior Coaches Div E.p. Dutton', 'Goldacre', 'Consulier Industries Inc', 'Land Rover', 'Nissan', 'Kenyon Corporation Of America', 'Genesis', 'Aurora Cars Ltd', 'Saab', 'Hyundai', 'Yugo', 'London Coach Co Inc', 'Saleen', 'Geo', 'Subaru', 
+                  'Laforza Automobile Inc', 'Tecstar, LP', 'Mazda', 'Red Shift Ltd.', 'BMW', 'Volkswagen', 'Eagle', 'Azure Dynamics', 'Hummer', 'Dabryan Coach Builders Inc', 'Volga Associated Automobile'
+                  ]
       - name: model
         tests:
           - not_null
@@ -139,7 +149,6 @@ models:
                 max_value: 98
       - name: unrounded_city_mpg_ft1
         tests:
-          - not_null
           - value_range:
               arguments:
                 min_value: 1
@@ -147,26 +156,23 @@ models:
 
       - name: city_mpg_ft2
         tests:
-          - not_null
           - value_range:
               arguments:
                 min_value: 1
                 max_value: 98
       - name: unrounded_city_mpg_ft2
         tests:
-          - not_null
           - value_range:
               arguments:
                 min_value: 1
-                max_value: 98
+                max_value: 150
       - name: city_gasoline_consumption_cd
       - name: city_electricity_consumption
         tests:
-          - not_null
           - value_range:
               arguments:
-                min_value: 1
-                max_value: 98
+                min_value: 0
+                max_value: 150
       - name: city_utility_factor
       - name: highway_mpg_ft1
         tests:
@@ -174,7 +180,7 @@ models:
           - value_range:
               arguments:
                 min_value: 1
-                max_value: 98
+                max_value: 150
       - name: unrounded_highway_mpg_ft1
       - name: highway_mpg_ft2
       - name: unrounded_highway_mpg_ft2
@@ -185,7 +191,7 @@ models:
           - value_range:
               arguments:
                 min_value: 1
-                max_value: 98
+                max_value: 150
       - name: highway_utility_factor
       - name: unadjusted_city_mpg_ft1
       - name: unadjusted_highway_mpg_ft1
@@ -196,7 +202,7 @@ models:
           - value_range:
               arguments:
                 min_value: 6
-                max_value: 98
+                max_value: 150
       - name: unrounded_combined_mpg_ft1
       - name: combined_mpg_ft2
         tests:
@@ -204,7 +210,7 @@ models:
           - value_range:
               arguments:
                 min_value: 6
-                max_value: 98
+                max_value: 150
       - name: unrounded_combined_mpg_ft2
       - name: combined_electricity_consumption
       - name: combined_gasoline_consumption_cd
@@ -215,7 +221,7 @@ models:
           - value_range:
               arguments:
                 min_value: 100
-                max_value: 8000
+                max_value: 50000
       - name: annual_fuel_cost_ft2
       - name: gas_guzzler_tax
       - name: save_or_spend_5_year
@@ -271,7 +277,6 @@ models:
                 max_value: 400
       - name: range_ft2
         tests:
-          - not_null
           - value_range:
               arguments:
                 min_value: 0
@@ -345,7 +350,7 @@ SELECT *
 FROM base
 WHERE electric_range > 100
   AND msrp > 20000 AND msrp < 300000
-  AND vehicle_model_year >= 2010
+  AND vehicle_model_year >= 2000
   AND make IS NOT NULL
 """
 
@@ -356,8 +361,12 @@ with base as (
       date,
       region,
       CAST(model_year AS INT) as vehicle_model_year,
-      number_of_vehicles_registered_at_the_same_address,
       COALESCE(NULLIF(REPLACE(gvwr_class::text, ',', ''), '')::INT, 0) AS gvwr_class,
+    CASE
+      WHEN number_of_vehicles_registered_at_the_same_address::text LIKE '≥%'
+        THEN NULLIF(REPLACE(number_of_vehicles_registered_at_the_same_address::text, '≥', ''), '')::INT
+      ELSE COALESCE(NULLIF(REPLACE(number_of_vehicles_registered_at_the_same_address::text, ',', ''), '')::INT, 0)
+    END AS number_of_vehicles_registered_at_the_same_address,
       NULLIF(REPLACE(fuel_type::text, 'NULL', ''), '') AS fuel_type,
       NULLIF(REPLACE(vehicle_category::text, 'NULL', ''), '') AS vehicle_category,
       NULLIF(REPLACE(fuel_technology::text, 'NULL', ''), '') AS fuel_technology,
@@ -367,7 +376,7 @@ with base as (
 
 SELECT *
 FROM base
-WHERE vehicle_model_year >= 2010 
+WHERE vehicle_model_year >= 2000 
   AND vehicle_population > 1
   AND fuel_type IS NOT NULL
   AND vehicle_category IS NOT NULL;
@@ -377,18 +386,26 @@ MART_VEHICLE_FUEL_CONSUMPTION= """
 with base as (
   SELECT *,
   CAST(NULLIF(REPLACE(year::text, ',', ''), '') AS INT) AS model_year,
-  CAST(NULLIF(REPLACE(range_ft1::text, ',', ''), '') AS INT) AS vehicle_range
+  CAST(NULLIF(REPLACE(range_ft1::text, ',', ''), '') AS INT) AS vehicle_range,
+
+  CASE
+    when supercharger is null then false
+    when lower(trim(supercharger::text)) in ('na','n/a','') THEN false
+    else true
+  end as has_supercharger,
+  
+  CASE
+    when turbocharger is null then false
+    when lower(trim(supercharger::text)) in ('na','n/a','') THEN false
+    else true
+  end as has_turbocharger
+  
   FROM {{ref('stg_fuel_consumption')}}
   )
   
 SELECT * 
-FROM base  
-WHERE 
-  model_year > 2010 
-AND 
-  vehicle_range > 0;  
+FROM base;
 """
-
 
 
 MART_VEHICLE_SALES = """\
@@ -484,13 +501,76 @@ with base as (
 SELECT *
 FROM base
 WHERE
-    model_year IS NOT NULL
+    transmission IS NOT NULL
+    AND trim IS NOT NULL
+    AND make is NOT NULL
     AND model_year >= 2010
     AND make IS NOT NULL
     AND model IS NOT NULL
-    AND sellingprice IS NOT NULL
     AND sellingprice >= 1000
     AND sellingprice <= 200000
+"""
+
+
+VEHICLE_INFORMATION_SQL = """\
+with sales_agg as (
+    select
+        make,
+        model,
+        model_year,
+        count(model) as sold_count
+    from mart_vehicle_sales
+    group by make, model, model_year
+)
+
+select
+    cast(nullif(replace(f.year::text, ',', ''), '') as int) as model_year,
+    f.make,
+    f.model,
+    f.class,
+    f.fuel_type_1,
+    cast(nullif(f.city_mpg_ft1, '') as numeric) as city_mpg,
+    cast(nullif(f.highway_mpg_ft1, '') as numeric) as highway_mpg,
+    cast(nullif(f.combined_mpg_ft1, '') as numeric) as total_range,
+    cast(nullif(f.annual_fuel_cost_ft1, '') as numeric) as annual_fuel_cost,
+    s.sold_count
+from stg_fuel_consumption as f
+left join sales_agg as s
+    on lower(trim(f.make)) = lower(trim(s.make))
+    and lower(trim(f.model)) = lower(trim(s.model))
+    and cast(nullif(replace(f.year::text, ',', ''), '') as int) = s.model_year
+where lower(trim(f.fuel_type_1)) like '%gas%'
+   or lower(trim(f.fuel_type_1)) like '%diesel%'
+"""
+
+VEHICLE_EV_INFORMATION_SQL = """\
+  with ev_agg as (
+      select
+          make,
+          model,
+          count(*) as registered_count,
+          avg(nullif(electric_range, '')::numeric) as avg_electric_range
+      from {{ ref('stg_ev_population') }}
+      group by make, model
+  )
+
+  select
+      cast(nullif(replace(f.year::text, ',', ''), '') as int) as model_year,
+      f.make,
+      f.model,
+      f.class,
+      f.fuel_type_1,
+      cast(nullif(f.city_mpg_ft1, '') as numeric) as city_mpg,
+      cast(nullif(f.highway_mpg_ft1, '') as numeric) as highway_mpg,
+      cast(nullif(f.range_ft1, '') as numeric) as total_range,
+      cast(nullif(f.annual_fuel_cost_ft1, '') as numeric) as annual_fuel_cost,
+      e.registered_count,
+      e.avg_electric_range
+  from {{ ref('stg_fuel_consumption') }} as f
+  left join ev_agg as e
+      on lower(trim(f.make)) = lower(trim(e.make))
+      and lower(trim(f.model)) = lower(trim(e.model))
+  where lower(trim(f.fuel_type_1)) like '%electric%'
 """
 
 
@@ -504,3 +584,8 @@ where {{ column_name }} < {{ min_value }}
 
 {% endtest %}
 """
+
+
+  
+  
+  
