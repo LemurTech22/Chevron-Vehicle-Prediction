@@ -310,7 +310,13 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick', 'Cadillac', 'Chevrolet', 'Chrysler', 'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford', 'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu', 'Jaguar', 'Jeep', 'Kia', 'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 'Mercury', 'MINI', 'Mitsubishi', 'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab', 'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki', 'Tesla', 'Toyota', 'Volkswagen', 'Volvo']
+                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick', 
+                'Cadillac', 'Chevrolet', 'Chrysler', 'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford', 
+                'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu', 'Jaguar', 'Jeep', 'Kia', 
+                'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 'Mercury', 'MINI', 'Mitsubishi', 
+                'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab', 'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki', 
+                'Tesla', 'Toyota', 'Volkswagen', 'Volvo'
+                ]
       - name: model
         tests:
           - not_null
@@ -333,8 +339,138 @@ models:
                 min_value: 0
                 max_value: 200000
       - name: saledate
-"""
 
+  - name: mart_vehicle_information
+    columns:
+      - name: year
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 1982
+                max_value: 2026
+      - name: make
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick', 'Cadillac', 'Chevrolet', 'Chrysler', 
+                'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford', 'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu', 
+                'Jaguar', 'Jeep', 'Kia', 'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 
+                'Mercury', 'MINI', 'Mitsubishi', 'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab', 
+                'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki', 'Tesla', 'Toyota', 'Volkswagen', 'Volvo' ]
+                config:
+                  severity: warn
+      - name: model
+        tests:
+          - not_null
+      - name: class
+      - name: fuel_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['gas', 'diesel']
+      - name: city_mpg
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 6
+                max_value: 60
+      - name: highway_mpg
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 6
+                max_value: 65
+      - name: combined_mpg
+        tests:
+          - not_null
+      - name: annual_fuel_cost
+        tests:
+          - value_range:
+              arguments:
+                min_value: 500
+                max_value: 6500
+      - name: sold_count
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 0         
+                
+  - name: mart_vehicle_ev_information
+    columns:
+      - name: model_year
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 1998
+                max_value: 2026
+      - name: make
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Audi', 'BMW', 'Chevrolet', 'Fiat', 'Ford', 'Genesis', 'Honda',
+                         'Hyundai', 'Jaguar', 'Kia', 'Lexus', 'Lucid', 'Mazda',
+                         'Mercedes-Benz', 'MINI', 'Mitsubishi', 'Nissan', 'Polestar',
+                         'Porsche', 'Rivian', 'smart', 'Subaru', 'Tesla', 'Toyota',
+                         'Volkswagen', 'Volvo']
+              config:
+                severity: warn
+      - name: model
+        tests:
+          - not_null
+      - name: class
+      - name: fuel_type_1
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Electricity']
+      - name: city_mpg
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 20
+                max_value: 180
+      - name: highway_mpg
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 20
+                max_value: 160
+      - name: total_range
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 30
+                max_value: 600
+      - name: annual_fuel_cost
+        tests:
+          - value_range:
+              arguments:
+                min_value: 200
+                max_value: 4000
+      - name: registered_count
+        tests:
+          - value_range:
+              arguments:
+                min_value: 0
+      - name: avg_electric_range
+        tests:
+          - value_range:
+              arguments:
+                min_value: 0
+                max_value: 600
+"""
 
 EV_MART_BASE_SQL = """\
 with base as (
@@ -353,7 +489,6 @@ WHERE electric_range > 100
   AND vehicle_model_year >= 2000
   AND make IS NOT NULL
 """
-
 
 CHEVRON_MART_BASE_SQL = """\
 with base as (
@@ -515,12 +650,12 @@ WHERE
 VEHICLE_INFORMATION_SQL = """\
 with sales_agg as (
     select
-        make,
-        model,
-        model_year,
-        count(model) as sold_count
-    from mart_vehicle_sales
-    group by make, model, model_year
+        lower(trim(make))  as make_key,
+        lower(trim(model)) as model_key,
+        cast(year as int) as model_year,
+        count(*) as sold_count
+    from {{ ref('stg_vehicle_sales') }}
+    group by 1, 2, 3
 )
 
 select
@@ -528,18 +663,21 @@ select
     f.make,
     f.model,
     f.class,
-    f.fuel_type_1,
-    cast(nullif(f.city_mpg_ft1, '') as numeric) as city_mpg,
-    cast(nullif(f.highway_mpg_ft1, '') as numeric) as highway_mpg,
-    cast(nullif(f.combined_mpg_ft1, '') as numeric) as total_range,
-    cast(nullif(f.annual_fuel_cost_ft1, '') as numeric) as annual_fuel_cost,
-    s.sold_count
-from stg_fuel_consumption as f
+    case
+        when lower(trim(f.fuel_type_1::text)) like '%gasoline%' then 'gas'
+        when lower(trim(f.fuel_type_1::text)) like '%diesel%'   then 'diesel'
+    end as fuel_type,
+    cast(nullif(f.city_mpg_ft1, '') as numeric)          as city_mpg,
+    cast(nullif(f.highway_mpg_ft1, '') as numeric)       as highway_mpg,
+    cast(nullif(f.combined_mpg_ft1, '') as numeric)      as combined_mpg,
+    cast(nullif(f.annual_fuel_cost_ft1, '') as numeric)  as annual_fuel_cost,
+    coalesce(s.sold_count, 0) as sold_count
+from {{ ref('stg_fuel_consumption') }} as f
 left join sales_agg as s
-    on lower(trim(f.make)) = lower(trim(s.make))
-    and lower(trim(f.model)) = lower(trim(s.model))
-    and cast(nullif(replace(f.year::text, ',', ''), '') as int) = s.model_year
-where lower(trim(f.fuel_type_1)) like '%gas%'
+    on lower(trim(f.make))  = s.make_key
+   and lower(trim(f.model)) = s.model_key
+   and cast(nullif(replace(f.year::text, ',', ''), '') as int) = s.model_year
+where lower(trim(f.fuel_type_1)) like '%gasoline%'
    or lower(trim(f.fuel_type_1)) like '%diesel%'
 """
 
@@ -584,8 +722,3 @@ where {{ column_name }} < {{ min_value }}
 
 {% endtest %}
 """
-
-
-  
-  
-  
