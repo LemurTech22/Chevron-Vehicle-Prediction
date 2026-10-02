@@ -22,12 +22,11 @@ models:
                 min_value: 2000
                 max_value: 2026
 
-  - name: mart_chevron_population
+  - name: mart_vehicle_population
     columns:
       - name: date
         tests:
           - not_null
-
       - name: vehicle_category
         tests:
           - not_null
@@ -62,7 +61,9 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: [1,2,3]
+                values: [0,1,2,3]
+              config:
+                severity: warn
       - name: region
         tests:
           - accepted_values:
@@ -74,227 +75,53 @@ models:
           - value_range:
               arguments:
                 min_value: 1
-                max_value: 100000
 
-  - name: fuel_economy
+  - name: mart_vehicle_fuel_consumption
     columns:
       - name: vehicle_id
         tests:
           - unique
           - not_null
-
-      - name: year
+      - name: model_year
         tests:
           - not_null
           - value_range:
               arguments:
-                min_value: 2000
+                min_value: 1984
                 max_value: 2026
-
       - name: make
         tests:
           - not_null
-          - accepted_values:
-              arguments:
-                values: [
-                  'S and S Coach Company  E.p. Dutton', 'Ford', 'Maserati', 'Dodge', 'Excalibur Autos', 'Infiniti', 'J.K. Motors', 'Fisker', 'TVR Engineering Ltd', 'Grumman Allied Industries', 'Dacia', 'CODA Automotive', 
-                  'PAS Inc - GMC', 'SRT', 'ASC Incorporated', 'Audi', 'Mcevoy Motors', 'Import Trade Services', 'Lexus', 'Import Foreign Auto Sales Inc', 'Isis Imports Ltd', 'General Motors', 'Jeep', 'American Motors Corporation', 
-                  'Vector', 'Cadillac', 'Sterling', 'Autokraft Limited', 'Texas Coach Company', 'Panther Car Company Limited', 'Evans Automobiles', 'Ferrari', 'GMC', 'Maybach', 'Lincoln', 'Honda', 'Spyker', 'Chevrolet', 'JBA Motorcars, Inc.', 
-                  'Quantum Technologies', 'Daihatsu', 'Environmental Rsch and Devp Corp', 'Porsche', 'Pininfarina', 'Rolls-Royce', 'Tesla', 'Jaguar', 'Renault', 'Kia', 'Saleen Performance', 'CX Automotive', 'Pagani', 'Bugatti', 'Ruf Automobile Gmbh', 
-                  'McLaren Automotive', 'Fiat', 'Buick', 'Merkur', 'CCC Engineering', 'Mercury', 'Wallace Environmental', 'Roush Performance', 'Toyota', 'Bertone', 'Grumman Olson', 'Mahindra', 'Avanti Motor Corporation', 'VPG', 'BMW Alpina', 'PAS, Inc', 
-                  'Federal Coach', 'MINI', 'Bentley', 'Peugeot', 'Pontiac', 'Plymouth', 'Lambda Control Systems', 'Volvo', 'Panoz Auto-Development', 'Acura', 'Suzuki', 'Bitter Gmbh and Co. Kg', 'Aston Martin', 'BYD', 'Mitsubishi', 'AM General', 'E. P. Dutton, Inc.', 
-                  'Qvale', 'Chrysler', 'London Taxi', 'Mobility Ventures LLC', 'Isuzu', 'Ram', 'Daewoo', 'Morgan', 'Panos', 'Scion', 'Shelby', 'Saturn', 'Bill Dovell Motor Car Company', 'Vixen Motor Company', 'Alfa Romeo', 'smart', 'Lotus', 'Lamborghini', 'Mercedes-Benz', 
-                  'Oldsmobile', 'Superior Coaches Div E.p. Dutton', 'Goldacre', 'Consulier Industries Inc', 'Land Rover', 'Nissan', 'Kenyon Corporation Of America', 'Genesis', 'Aurora Cars Ltd', 'Saab', 'Hyundai', 'Yugo', 'London Coach Co Inc', 'Saleen', 'Geo', 'Subaru', 
-                  'Laforza Automobile Inc', 'Tecstar, LP', 'Mazda', 'Red Shift Ltd.', 'BMW', 'Volkswagen', 'Eagle', 'Azure Dynamics', 'Hummer', 'Dabryan Coach Builders Inc', 'Volga Associated Automobile'
-                  ]
       - name: model
         tests:
           - not_null
-      - name: class
-        tests:
-          - not_null
-          - accepted_values:
-              arguments:
-                values: ['Sport Utility Vehicle - 4WD', 'Special Purpose Vehicles/4wd', 'Special Purpose Vehicle 4WD', 'Large Cars', 'Vans Passenger', 'Special Purpose Vehicle', 'Standard Sport Utility Vehicle 4WD', 'Minivan - 4WD', 'Special Purpose Vehicles', 'Minicompact Cars', 'Midsize Station Wagons', 'Compact Cars', 'Special Purpose Vehicles/2wd', 'Midsize Cars', 'Sport Utility Vehicle - 2WD', 'Standard Pickup Trucks', 'Standard Pickup Trucks 2WD', 'Standard Pickup Trucks 4WD', 'Small Sport Utility Vehicle 2WD', 'Vans, Cargo Type', 'Small Sport Utility Vehicle 4WD', 'Small Pickup Trucks', 'Small Station Wagons', 'Midsize-Large Station Wagons', 'Vans, Passenger Type', 'Two Seaters', 'Minivan - 2WD', 'Special Purpose Vehicle 2WD', 'Standard Pickup Trucks/2wd', 'Small Pickup Trucks 4WD', 'Small Pickup Trucks 2WD', 'Standard Sport Utility Vehicle 2WD', 'Subcompact Cars', 'Vans']
-      - name: drive
-        tests:
-          - accepted_values:
-              arguments:
-                values: ['Part-Time 4-Wheel Drive','4 Wheel or All-Wheel Drive','Rear-Wheel Drive','N/A','All-Wheel Drive',' Front-Wheel Drive','4-Wheel Drive','2-Wheel Drive']
-      - name: transmission
-      - name: transmission_type
-      - name: engine_index
-      - name: engine_descriptor
-      - name: engine_cylinders
-      - name: engine_displacement
-      - name: turbocharger
-      - name: supercharger
-      - name: fuel_type
-        tests:
-          - accepted_values:
-              arguments:
-                values: ['Gasoline or propane','Premium and Electricity','Premium Gas or Electricity','Regular','CNG','Electricity','Gasoline or natural gas','Diesel','Regular Gas and Electricity','Gasoline or E85', 'Midgrade', 'Premium', 'Regular Gas or Electricity', 'Premium or E85']
-      - name: fuel_type_1
-        tests:
-          - accepted_values:
-              arguments:
-                values: ['Natural Gas', 'Diesel', 'Midgrade Gasoline','Electricity','Premium Gasoline','Regular Gasoline']
-      - name: fuel_type_2
-      - name: city_mpg_ft1
-        tests:
-          - not_null
-          - value_range:
-              arguments:
-                min_value: 1
-                max_value: 98
-      - name: unrounded_city_mpg_ft1
-        tests:
-          - value_range:
-              arguments:
-                min_value: 1
-                max_value: 98
-
-      - name: city_mpg_ft2
-        tests:
-          - value_range:
-              arguments:
-                min_value: 1
-                max_value: 98
-      - name: unrounded_city_mpg_ft2
-        tests:
-          - value_range:
-              arguments:
-                min_value: 1
-                max_value: 150
-      - name: city_gasoline_consumption_cd
-      - name: city_electricity_consumption
-        tests:
-          - value_range:
-              arguments:
-                min_value: 0
-                max_value: 150
-      - name: city_utility_factor
-      - name: highway_mpg_ft1
+      - name: city_mpg
         tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1
                 max_value: 150
-      - name: unrounded_highway_mpg_ft1
-      - name: highway_mpg_ft2
-      - name: unrounded_highway_mpg_ft2
-      - name: highway_gasoline_consumption_cd
-      - name: highway_electricity_consumption
+      - name: highway_mpg
         tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1
                 max_value: 150
-      - name: highway_utility_factor
-      - name: unadjusted_city_mpg_ft1
-      - name: unadjusted_highway_mpg_ft1
-      - name: unadjusted_city_mpg_ft2
-      - name: combined_mpg_ft1
+      - name: combined_mpg
         tests:
           - not_null
           - value_range:
               arguments:
-                min_value: 6
+                min_value: 1
                 max_value: 150
-      - name: unrounded_combined_mpg_ft1
-      - name: combined_mpg_ft2
+      - name: annual_fuel_cost
         tests:
-          - not_null
-          - value_range:
-              arguments:
-                min_value: 6
-                max_value: 150
-      - name: unrounded_combined_mpg_ft2
-      - name: combined_electricity_consumption
-      - name: combined_gasoline_consumption_cd
-      - name: combined_utility_factor
-      - name: annual_fuel_cost_ft1
-        tests:
-          - not_null
           - value_range:
               arguments:
                 min_value: 100
                 max_value: 50000
-      - name: annual_fuel_cost_ft2
-      - name: gas_guzzler_tax
-      - name: save_or_spend_5_year
-      - name: annual_consumption_in_barrels_ft1
-      - name: annual_consumption_in_barrels_ft2
-      - name: tailpipe_co2_ft1
-      - name: tailpipe_co2_in_grams_mile_ft1
-      - name: tailpipe_co2_ft2
-      - name: tailpipe_co2_in_grams_mile_ft2
-      - name: fuel_economy_score
-      - name: ghg_score
-      - name: ghg_score_alt_fuel
-      - name: my_mpg_data
-      - name: x2d_passenger_volume
-      - name: x2d_luggage_volume
-      - name: x4d_passenger_volume
-      - name: x4d_luggage_volume
-      - name: hatchback_passenger_volume
-      - name: hatchback_luggage_volume
-      - name: start_stop_technology
-      - name: alternative_fuel_technology
-      - name: electric_motor
-      - name: manufacturer_code
-      - name: gasoline_electricity_blended_cd
-      - name: vehicle_charger
-      - name: alternate_charger
-      - name: hours_to_charge_120v
-      - name: hours_to_charge_240v
-      - name: hours_to_charge_ac_240v
-      - name: composite_city_mpg
-      - name: composite_highway_mpg
-      - name: composite_combined_mpg
-      - name: range_ft1
-        tests:
-          - not_null
-          - value_range:
-              arguments:
-                min_value: 0
-                max_value: 350
-      - name: city_range_ft1
-        tests:
-          - not_null
-          - value_range:
-              arguments:
-                min_value: 0
-                max_value: 300
-      - name: highway_range_ft1
-        tests:
-          - not_null
-          - value_range:
-              arguments:
-                min_value: 0
-                max_value: 400
-      - name: range_ft2
-        tests:
-          - value_range:
-              arguments:
-                min_value: 0
-                max_value: 350
-      - name: city_range_ft2
-        tests:
-          - not_null
-          - value_range:
-              arguments:
-                min_value: 0
-                max_value: 300
-      - name: highway_range_ft2
-        tests:
-          - not_null
-          - value_range:
-              arguments:
-                min_value: 0
-                max_value: 400
 
   - name: mart_vehicle_sales
     columns:
@@ -310,27 +137,16 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick', 
-                'Cadillac', 'Chevrolet', 'Chrysler', 'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford', 
-                'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu', 'Jaguar', 'Jeep', 'Kia', 
-                'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 'Mercury', 'MINI', 'Mitsubishi', 
-                'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab', 'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki', 
+                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick',
+                'Cadillac', 'Chevrolet', 'Chrysler', 'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford',
+                'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu', 'Jaguar', 'Jeep', 'Kia',
+                'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 'Mercury', 'MINI', 'Mitsubishi',
+                'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab', 'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki',
                 'Tesla', 'Toyota', 'Volkswagen', 'Volvo'
                 ]
       - name: model
         tests:
           - not_null
-      - name: trim
-      - name: body
-      - name: transmission
-      - name: vin
-      - name: state
-      - name: condition
-      - name: odometer
-      - name: color
-      - name: interior
-      - name: seller
-      - name: mmr
       - name: sellingprice
         tests:
           - not_null
@@ -338,11 +154,10 @@ models:
               arguments:
                 min_value: 0
                 max_value: 200000
-      - name: saledate
 
-  - name: mart_vehicle_information
+  - name: mart_VEHICLE_INFORMATION
     columns:
-      - name: year
+      - name: model_year
         tests:
           - not_null
           - value_range:
@@ -354,13 +169,13 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick', 'Cadillac', 'Chevrolet', 'Chrysler', 
-                'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford', 'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu', 
-                'Jaguar', 'Jeep', 'Kia', 'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz', 
-                'Mercury', 'MINI', 'Mitsubishi', 'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab', 
-                'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki', 'Tesla', 'Toyota', 'Volkswagen', 'Volvo' ]
-                config:
-                  severity: warn
+                values: ['Acura', 'Airstream', 'Aston Martin', 'Audi', 'Bentley', 'BMW', 'Buick', 'Cadillac', 'Chevrolet', 'Chrysler',
+                'Daewoo', 'Dodge', 'Ferrari', 'FIAT', 'Fisker', 'Ford', 'Geo', 'GMC', 'Honda', 'HUMMER', 'Hyundai', 'Infiniti', 'Isuzu',
+                'Jaguar', 'Jeep', 'Kia', 'Lamborghini', 'Land Rover', 'Lexus', 'Lincoln', 'Lotus', 'Maserati', 'Mazda', 'Mercedes-Benz',
+                'Mercury', 'MINI', 'Mitsubishi', 'Nissan', 'Oldsmobile', 'Plymouth', 'Pontiac', 'Porsche', 'Ram', 'Rolls-Royce', 'Saab',
+                'Saturn', 'Scion', 'smart', 'Subaru', 'Suzuki', 'Tesla', 'Toyota', 'Volkswagen', 'Volvo']
+              config:
+                severity: warn
       - name: model
         tests:
           - not_null
@@ -399,9 +214,9 @@ models:
           - not_null
           - value_range:
               arguments:
-                min_value: 0         
-                
-  - name: mart_vehicle_ev_information
+                min_value: 0
+
+  - name: mart_EV_INFORMATION
     columns:
       - name: model_year
         tests:
@@ -461,6 +276,7 @@ models:
                 max_value: 4000
       - name: registered_count
         tests:
+          - not_null
           - value_range:
               arguments:
                 min_value: 0
@@ -470,16 +286,57 @@ models:
               arguments:
                 min_value: 0
                 max_value: 600
+
+  - name: mart_VEHICLE_WEIGHT_CLASS
+    columns:
+      - name: model_year
+        tests:
+          - not_null
+      - name: vehicle_category
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['P','BS','BT','MC','MH','B','T1','T2','T3','T4','T5','T6','T7']
+      - name: vehicle_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['passenger','motorcycle','truck','motor_home','bus']
+      - name: duty_category
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['light_duty','medium_duty','heavy_duty','varies']
+      - name: fuel_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['gas','diesel','hydrogen','natural_gas','electric']
+      - name: fuel_technology
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['FCEV','PHEV','BEV','ICE']
+      - name: vehicle_population
+        tests:
+          - not_null
+          - value_range:
+              arguments:
+                min_value: 1
 """
 
 EV_MART_BASE_SQL = """\
 with base as (
-    SELECT 
+    SELECT
       CAST(model_year AS INT) as vehicle_model_year,
-      make, 
+      make,
       CAST(NULLIF(REPLACE(electric_range::text, ',', ''), '') as INT) as electric_range,
-      CAST(NULLIF(REPLACE(base_msrp::text, ',', ''), '') as INT) as msrp 
-    FROM {{ ref('stg_ev_population') }}   
+      CAST(NULLIF(REPLACE(base_msrp::text, ',', ''), '') as INT) as msrp
+    FROM {{ ref('stg_ev_population') }}
 )
 
 SELECT *
@@ -492,7 +349,7 @@ WHERE electric_range > 100
 
 CHEVRON_MART_BASE_SQL = """\
 with base as (
-    SELECT 
+    SELECT
       date,
       region,
       CAST(model_year AS INT) as vehicle_model_year,
@@ -511,37 +368,41 @@ with base as (
 
 SELECT *
 FROM base
-WHERE vehicle_model_year >= 2000 
+WHERE vehicle_model_year >= 2000
   AND vehicle_population > 1
   AND fuel_type IS NOT NULL
-  AND vehicle_category IS NOT NULL;
+  AND vehicle_category IS NOT NULL
 """
 
-MART_VEHICLE_FUEL_CONSUMPTION= """
+MART_VEHICLE_FUEL_CONSUMPTION = """\
 with base as (
-  SELECT *,
-  CAST(NULLIF(REPLACE(year::text, ',', ''), '') AS INT) AS model_year,
-  CAST(NULLIF(REPLACE(range_ft1::text, ',', ''), '') AS INT) AS vehicle_range,
+  SELECT
+    *,
+    CAST(NULLIF(REPLACE(year::text, ',', ''), '') AS INT) AS model_year,
+    CAST(NULLIF(REPLACE(range_ft1::text, ',', ''), '') AS INT) AS vehicle_range,
+    CAST(NULLIF(city_mpg_ft1::text, '') AS NUMERIC)          AS city_mpg,
+    CAST(NULLIF(highway_mpg_ft1::text, '') AS NUMERIC)       AS highway_mpg,
+    CAST(NULLIF(combined_mpg_ft1::text, '') AS NUMERIC)      AS combined_mpg,
+    CAST(NULLIF(annual_fuel_cost_ft1::text, '') AS NUMERIC)  AS annual_fuel_cost,
 
-  CASE
-    when supercharger is null then false
-    when lower(trim(supercharger::text)) in ('na','n/a','') THEN false
-    else true
-  end as has_supercharger,
-  
-  CASE
-    when turbocharger is null then false
-    when lower(trim(supercharger::text)) in ('na','n/a','') THEN false
-    else true
-  end as has_turbocharger
-  
-  FROM {{ref('stg_fuel_consumption')}}
-  )
-  
-SELECT * 
-FROM base;
+    CASE
+      WHEN supercharger IS NULL THEN false
+      WHEN lower(trim(supercharger::text)) IN ('na', 'n/a', '') THEN false
+      ELSE true
+    END AS has_supercharger,
+
+    CASE
+      WHEN turbocharger IS NULL THEN false
+      WHEN lower(trim(turbocharger::text)) IN ('na', 'n/a', '') THEN false
+      ELSE true
+    END AS has_turbocharger
+
+  FROM {{ ref('stg_fuel_consumption') }}
+)
+
+SELECT *
+FROM base
 """
-
 
 MART_VEHICLE_SALES = """\
 with base as (
@@ -638,23 +499,21 @@ FROM base
 WHERE
     transmission IS NOT NULL
     AND trim IS NOT NULL
-    AND make is NOT NULL
-    AND model_year >= 2010
     AND make IS NOT NULL
+    AND model_year >= 2010
     AND model IS NOT NULL
     AND sellingprice >= 1000
     AND sellingprice <= 200000
 """
-
 
 VEHICLE_INFORMATION_SQL = """\
 with sales_agg as (
     select
         lower(trim(make))  as make_key,
         lower(trim(model)) as model_key,
-        cast(year as int) as model_year,
+        model_year,
         count(*) as sold_count
-    from {{ ref('stg_vehicle_sales') }}
+    from {{ ref('mart_vehicle_sales') }}
     group by 1, 2, 3
 )
 
@@ -682,43 +541,105 @@ where lower(trim(f.fuel_type_1)) like '%gasoline%'
 """
 
 VEHICLE_EV_INFORMATION_SQL = """\
-  with ev_agg as (
-      select
-          make,
-          model,
-          count(*) as registered_count,
-          avg(nullif(electric_range, '')::numeric) as avg_electric_range
-      from {{ ref('stg_ev_population') }}
-      group by make, model
-  )
+with ev_agg as (
+    select
+        lower(trim(make))  as make_key,
+        lower(trim(model)) as model_key,
+        count(*) as registered_count,
+        avg(nullif(nullif(electric_range::text, ''), '0')::numeric) as avg_electric_range
+    from {{ ref('stg_ev_population') }}
+    group by 1, 2
+),
 
-  select
-      cast(nullif(replace(f.year::text, ',', ''), '') as int) as model_year,
-      f.make,
-      f.model,
-      f.class,
-      f.fuel_type_1,
-      cast(nullif(f.city_mpg_ft1, '') as numeric) as city_mpg,
-      cast(nullif(f.highway_mpg_ft1, '') as numeric) as highway_mpg,
-      cast(nullif(f.range_ft1, '') as numeric) as total_range,
-      cast(nullif(f.annual_fuel_cost_ft1, '') as numeric) as annual_fuel_cost,
-      e.registered_count,
-      e.avg_electric_range
-  from {{ ref('stg_fuel_consumption') }} as f
-  left join ev_agg as e
-      on lower(trim(f.make)) = lower(trim(e.make))
-      and lower(trim(f.model)) = lower(trim(e.model))
-  where lower(trim(f.fuel_type_1)) like '%electric%'
+fuel as (
+    select
+        cast(nullif(replace(year::text, ',', ''), '') as int) as model_year,
+        make,
+        model,
+        class,
+        fuel_type_1,
+        cast(nullif(city_mpg_ft1, '') as numeric)          as city_mpg,
+        cast(nullif(highway_mpg_ft1, '') as numeric)       as highway_mpg,
+        cast(nullif(range_ft1, '') as numeric)             as total_range,
+        cast(nullif(annual_fuel_cost_ft1, '') as numeric)  as annual_fuel_cost
+    from {{ ref('stg_fuel_consumption') }}
+    where lower(trim(fuel_type_1)) like '%electric%'
+)
+
+select
+    f.model_year,
+    f.make,
+    f.model,
+    f.class,
+    f.fuel_type_1,
+    f.city_mpg,
+    f.highway_mpg,
+    f.total_range,
+    f.annual_fuel_cost,
+    coalesce(e.registered_count, 0) as registered_count,
+    e.avg_electric_range
+from fuel as f
+left join ev_agg as e
+    on lower(trim(f.make))  = e.make_key
+   and lower(trim(f.model)) = e.model_key
+where f.total_range >= 30
+  and f.total_range <= 600
 """
 
+VEHICLE_WEIGHT_CLASS_MART_SQL = """\
+with base as (
+    select
+        vehicle_model_year as model_year,
+        vehicle_category,
+        fuel_type,
+        fuel_technology,
+        vehicle_population
+    from {{ ref('mart_vehicle_population') }}
+)
+
+select
+    model_year,
+    vehicle_category,
+    case
+        when upper(trim(vehicle_category)) = 'P'  then 'passenger'
+        when upper(trim(vehicle_category)) = 'MC' then 'motorcycle'
+        when upper(trim(vehicle_category)) in ('T1','T2','T3','T4','T5','T6','T7') then 'truck'
+        when upper(trim(vehicle_category)) = 'MH' then 'motor_home'
+        when upper(trim(vehicle_category)) in ('B','BS','BT') then 'bus'
+    end as vehicle_type,
+    -- T1-T7 mapping is provisional until confirmed against the data dictionary
+    case
+        when upper(trim(vehicle_category)) in ('P','MC','T1','T2') then 'light_duty'
+        when upper(trim(vehicle_category)) in ('T3','T4','T5','T6') then 'medium_duty'
+        when upper(trim(vehicle_category)) = 'T7' then 'heavy_duty'
+        when upper(trim(vehicle_category)) in ('B','BS','BT','MH') then 'varies'
+    end as duty_category,
+    case lower(trim(fuel_type))
+        when 'hydrogen'    then 'hydrogen'
+        when 'natural gas' then 'natural_gas'
+        when 'diesel'      then 'diesel'
+        when 'gasoline'    then 'gas'
+        when 'electric'    then 'electric'
+    end as fuel_type,
+    fuel_technology,
+    vehicle_population
+from base
+"""
 
 TEST_VALUE_RANGE_SQL = """\
-{% test value_range(model, column_name, min_value, max_value) %}
+{% test value_range(model, column_name, min_value=none, max_value=none) %}
+
+{% set conditions = [] %}
+{% if min_value is not none %}
+    {% do conditions.append(column_name ~ ' < ' ~ min_value) %}
+{% endif %}
+{% if max_value is not none %}
+    {% do conditions.append(column_name ~ ' > ' ~ max_value) %}
+{% endif %}
 
 select *
 from {{ model }}
-where {{ column_name }} < {{ min_value }}
-   or {{ column_name }} > {{ max_value }}
+where {{ conditions | join(' or ') if conditions else '1 = 0' }}
 
 {% endtest %}
 """

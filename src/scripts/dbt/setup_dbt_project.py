@@ -104,6 +104,8 @@ class DBT_Project:
                 (base_mart_path / "mart_vehicle_sales.sql", mart_sql_commands.MART_VEHICLE_SALES),
                 (base_mart_path / "mart_VEHICLE_INFORMATION.sql", mart_sql_commands.VEHICLE_INFORMATION_SQL),
                 (base_mart_path / "mart_EV_INFORMATION.sql", mart_sql_commands.VEHICLE_EV_INFORMATION_SQL),
+                (base_mart_path / "mart_VEHICLE_WEIGHT_CLASS.sql", mart_sql_commands.VEHICLE_WEIGHT_CLASS_MART_SQL),
+
             ],
         }
         self.helper_dbt(mart_args, stage="mart")
