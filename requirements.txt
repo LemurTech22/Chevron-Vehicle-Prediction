@@ -9,3 +9,4 @@ dbt-core
 dbt-postgres
 python-dotenv
 pyyaml-env-tag
+boto3

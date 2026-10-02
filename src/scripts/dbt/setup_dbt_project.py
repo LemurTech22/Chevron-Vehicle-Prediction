@@ -102,9 +102,9 @@ class DBT_Project:
                 (base_mart_path / "mart_vehicle_population.sql", mart_sql_commands.CHEVRON_MART_BASE_SQL),
                 (base_mart_path / "mart_vehicle_fuel_consumption.sql", mart_sql_commands.MART_VEHICLE_FUEL_CONSUMPTION),
                 (base_mart_path / "mart_vehicle_sales.sql", mart_sql_commands.MART_VEHICLE_SALES),
-                (base_mart_path / "mart_VEHICLE_INFORMATION.sql", mart_sql_commands.VEHICLE_INFORMATION_SQL),
-                (base_mart_path / "mart_EV_INFORMATION.sql", mart_sql_commands.VEHICLE_EV_INFORMATION_SQL),
-                (base_mart_path / "mart_VEHICLE_WEIGHT_CLASS.sql", mart_sql_commands.VEHICLE_WEIGHT_CLASS_MART_SQL),
+                (base_mart_path / "mart_vehicle_information.sql", mart_sql_commands.VEHICLE_INFORMATION_SQL),
+                (base_mart_path / "mart_ev_information.sql", mart_sql_commands.VEHICLE_EV_INFORMATION_SQL),
+                (base_mart_path / "mart_vehicle_weight_class.sql", mart_sql_commands.VEHICLE_WEIGHT_CLASS_MART_SQL),
 
             ],
         }
