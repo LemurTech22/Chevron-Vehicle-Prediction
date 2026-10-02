@@ -1,22 +1,26 @@
 TODO:
-Work on Transformation.py
+
+Clean up Pipeline
 implement cloud services  
 Work on analytics
-work creating views via joins and cleansing in dbt
 
-Stage 2
-Clean Up columns in databases and simplify columns. 
-Remove and standarize datapoints, or missing values.
+Stage 4
 
+upload schemas into cloud service so AWS locally refer to floci
+combine s3, glue+athena for storage, and query
+visualize data via powerbi or tableau or another visualization software for linux,
+look into apache superset and Metabase
+find insights
+provide insigths to ML
+decide what model needs to be completed
 In Progress
 
-Need to create pipeline for data analysis and Model creation.
 
 refactor code
 
-
-
 Completed
+work creating views via joins and cleansing in dbt
+Work on Transformation.py
 Extract Transform and Loading data into a sql table completed!
 implemented staging for databases
 implement logging and error checking and validation.
