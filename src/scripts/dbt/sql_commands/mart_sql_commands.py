@@ -5,18 +5,18 @@ models:
   - name: mart_ev_population
     columns:
       - name: make
-        tests:
+        data_tests:
           - accepted_values:
               arguments:
                 values: ['KIA', 'FORD', 'PORSCHE', 'TESLA', 'CHEVROLET']
       - name: msrp
-        tests:
+        data_tests:
           - value_range:
               arguments:
                 min_value: 20000
                 max_value: 300000
       - name: vehicle_model_year
-        tests:
+        data_tests:
           - value_range:
               arguments:
                 min_value: 2000
@@ -25,52 +25,52 @@ models:
   - name: mart_vehicle_population
     columns:
       - name: date
-        tests:
+        data_tests:
           - not_null
       - name: vehicle_category
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['P','BS','BT','MC','MH','B','T1','T2','T3','T4','T5','T6','T7']
       - name: gvwr_class
-        tests:
+        data_tests:
           - accepted_values:
               arguments:
                 values: [0,1,2,3,4,5,6,7,8]
       - name: fuel_type
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Hydrogen','Natural Gas','Diesel','Gasoline','Electric']
       - name: vehicle_model_year
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 2000
                 max_value: 2026
       - name: fuel_technology
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['FCEV','PHEV','BEV','ICE']
       - name: number_of_vehicles_registered_at_the_same_address
-        tests:
+        data_tests:
           - accepted_values:
               arguments:
                 values: [0,1,2,3]
               config:
                 severity: warn
       - name: region
-        tests:
+        data_tests:
           - accepted_values:
               arguments:
                 values: ['Statewide']
       - name: vehicle_population
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
@@ -79,45 +79,45 @@ models:
   - name: mart_vehicle_fuel_consumption
     columns:
       - name: vehicle_id
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: model_year
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1984
                 max_value: 2026
       - name: make
-        tests:
+        data_tests:
           - not_null
       - name: model
-        tests:
+        data_tests:
           - not_null
       - name: city_mpg
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1
                 max_value: 150
       - name: highway_mpg
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1
                 max_value: 150
       - name: combined_mpg
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1
                 max_value: 150
       - name: annual_fuel_cost
-        tests:
+        data_tests:
           - value_range:
               arguments:
                 min_value: 100
@@ -126,14 +126,14 @@ models:
   - name: mart_vehicle_sales
     columns:
       - name: model_year
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 2010
                 max_value: 2026
       - name: make
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
@@ -145,10 +145,10 @@ models:
                 'Tesla', 'Toyota', 'Volkswagen', 'Volvo'
                 ]
       - name: model
-        tests:
+        data_tests:
           - not_null
       - name: sellingprice
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
@@ -158,14 +158,14 @@ models:
   - name: mart_VEHICLE_INFORMATION
     columns:
       - name: model_year
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1982
                 max_value: 2026
       - name: make
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
@@ -177,40 +177,40 @@ models:
               config:
                 severity: warn
       - name: model
-        tests:
+        data_tests:
           - not_null
       - name: class
       - name: fuel_type
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['gas', 'diesel']
       - name: city_mpg
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 6
                 max_value: 60
       - name: highway_mpg
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 6
                 max_value: 65
       - name: combined_mpg
-        tests:
+        data_tests:
           - not_null
       - name: annual_fuel_cost
-        tests:
+        data_tests:
           - value_range:
               arguments:
                 min_value: 500
                 max_value: 6500
       - name: sold_count
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
@@ -219,14 +219,14 @@ models:
   - name: mart_EV_INFORMATION
     columns:
       - name: model_year
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 1998
                 max_value: 2026
       - name: make
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
@@ -238,50 +238,50 @@ models:
               config:
                 severity: warn
       - name: model
-        tests:
+        data_tests:
           - not_null
       - name: class
       - name: fuel_type_1
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['Electricity']
       - name: city_mpg
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 20
                 max_value: 180
       - name: highway_mpg
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 20
                 max_value: 160
       - name: total_range
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 30
                 max_value: 600
       - name: annual_fuel_cost
-        tests:
+        data_tests:
           - value_range:
               arguments:
                 min_value: 200
                 max_value: 4000
       - name: registered_count
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
                 min_value: 0
       - name: avg_electric_range
-        tests:
+        data_tests:
           - value_range:
               arguments:
                 min_value: 0
@@ -290,39 +290,39 @@ models:
   - name: mart_VEHICLE_WEIGHT_CLASS
     columns:
       - name: model_year
-        tests:
+        data_tests:
           - not_null
       - name: vehicle_category
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['P','BS','BT','MC','MH','B','T1','T2','T3','T4','T5','T6','T7']
       - name: vehicle_type
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['passenger','motorcycle','truck','motor_home','bus']
       - name: duty_category
-        tests:
+        data_tests:
           - accepted_values:
               arguments:
                 values: ['light_duty','medium_duty','heavy_duty','varies']
       - name: fuel_type
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['gas','diesel','hydrogen','natural_gas','electric']
       - name: fuel_technology
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ['FCEV','PHEV','BEV','ICE']
       - name: vehicle_population
-        tests:
+        data_tests:
           - not_null
           - value_range:
               arguments:
