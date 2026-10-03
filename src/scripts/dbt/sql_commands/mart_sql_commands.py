@@ -155,7 +155,7 @@ models:
                 min_value: 0
                 max_value: 200000
 
-  - name: mart_VEHICLE_INFORMATION
+  - name: mart_vehicle_information
     columns:
       - name: model_year
         data_tests:
@@ -216,7 +216,7 @@ models:
               arguments:
                 min_value: 0
 
-  - name: mart_EV_INFORMATION
+  - name: mart_ev_information
     columns:
       - name: model_year
         data_tests:
@@ -287,7 +287,7 @@ models:
                 min_value: 0
                 max_value: 600
 
-  - name: mart_VEHICLE_WEIGHT_CLASS
+  - name: mart_vehicle_weight_class
     columns:
       - name: model_year
         data_tests:

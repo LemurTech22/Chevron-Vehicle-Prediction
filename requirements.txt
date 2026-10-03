@@ -11,3 +11,4 @@ python-dotenv
 pyyaml-env-tag
 boto3
 awscli
+duckdb
