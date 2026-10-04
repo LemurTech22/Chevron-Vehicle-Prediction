@@ -12,3 +12,4 @@ pyyaml-env-tag
 boto3
 awscli
 duckdb
+pyarrow

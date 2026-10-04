@@ -7,7 +7,7 @@ from pipeline.transform.transform import DataTransformer
 
 from scripts.dbt.run_dbt_build import run_dbt_build
 from scripts.db.export_db import database_export
-from floci.aws.cloud_upload.db_to_aws import aws_cloud
+from aws.main import run_aws_script
 from logs.logger import ETL_Logger, ErrorCategory
 
 
@@ -68,7 +68,7 @@ def helper_dbt():
         log = ETL_Logger(ErrorCategory.DATABASE)
         log.info("Exporting Stage 1 Database")
         parquet_root = database_export().db_export_script()
-        aws_cloud().aws_script(local_dir=parquet_root,s3_prefix="warehouse")
+        run_aws_script(local_dir=parquet_root,s3_prefix="warehouse")
     else:
         log = ETL_Logger(ErrorCategory.VALIDATION)
         log.error("DBT failed to validate schema for final staging; staging folder was rolled back.")

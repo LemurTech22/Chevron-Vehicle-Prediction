@@ -1,10 +1,8 @@
-## What do we need this file to do?
 """
-*Check and create s3 buckets if found continue
-*check env variables
-* compress into parquet file
-* upload to s3 
-* add logging
+
+ compress into parquet file
+ upload to s3 
+! add logging
 """
 import os, boto3
 from botocore.config import Config
@@ -72,8 +70,3 @@ class aws_cloud:
     def aws_script(self,local_dir: str, s3_prefix: str = ""):
         self.check_bucket()
         return self.db_upload_to_s3(local_dir=local_dir,s3_prefix=s3_prefix)
-
-
-
-
-
