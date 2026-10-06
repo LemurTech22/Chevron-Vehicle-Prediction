@@ -4,10 +4,6 @@ import pyarrow.parquet as pq
 from botocore.config import Config
 from dotenv import load_dotenv
 
-
-# Parquet logical type (str(pyarrow type)) -> Glue/Hive column type.
-# Falls back to "string" for anything unmapped -- safe default, since Athena
-# can still read it, just without native typed filtering on that column.
 GLUE_TYPE_MAP = {
     "int32": "int",
     "int64": "bigint",
@@ -24,9 +20,7 @@ GLUE_TYPE_MAP = {
 
 
 def glue_columns_from_parquet(parquet_file_path: str) -> list:
-    """Read a Parquet file's embedded schema and translate it to Glue
-    column definitions, so we never have to guess or hand-maintain a schema.
-    """
+
     schema = pq.read_schema(parquet_file_path)
     columns = []
     for field in schema:
@@ -63,10 +57,7 @@ class glue:
             print(f"Created Glue database '{self.db_name}'.")
 
     def register_table(self, table_name: str, s3_location: str, sample_parquet_file: str):
-        """Create (or replace) a Glue table pointing at s3_location, with its
-        schema read directly from sample_parquet_file. No crawler involved --
-        Parquet already carries its own schema, so there's nothing to infer.
-        """
+
         columns = glue_columns_from_parquet(sample_parquet_file)
 
         table_input = {
@@ -92,16 +83,7 @@ class glue:
             print(f"Created Glue table '{table_name}' -> {s3_location}")
 
     def run_glue_worker(self, parquet_root: str, s3_prefix: str):
-        """Walk parquet_root (export_db.py's output) two levels deep --
-        layer, then table -- and register one Glue table per table folder.
-        Matches the actual layout export_tables_to_parquet() produces:
 
-            {parquet_root}/<layer>/<table_name>/<table_name>.parquet
-
-        and the matching S3 layout aws_cloud.py uploads to:
-
-            s3://{bucket}/{s3_prefix}/<layer>/<table_name>/<table_name>.parquet
-        """
         self.glue_database()
 
         if not os.path.isdir(parquet_root):
